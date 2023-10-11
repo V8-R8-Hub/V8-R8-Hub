@@ -21,10 +21,15 @@
         <a-box src="#ground" position="-15 5 0" rotation="0 90 0" depth="2" width="30" height="20"></a-box>
         <a-box src="#ground" position="15 5 0" rotation="0 90 0" depth="2" width="30" height="20"></a-box>
         <a-box src="#ground" position="0 15 0" rotation="90 0 0" depth="2" width="30" height="30"></a-box>
-        <a-camera wasd-controls-enabled=false></a-camera>
+        <!-- <a-camera wasd-controls-enabled=false></a-camera> -->
 
         <!-- menu -->
-        <a-entity menu="color: blue, size: 20"></a-entity>
+        <a-box position="0 2 -3" width="3" height="4" depth="0,5" color="#FFF">
+            <a-box position="0 1.2 0" width="2.5" height="0.8" depth="0.1">
+                <a-entity position="3.9 0 0.1"scale="9 9 9" text="value: MENU;color:black"></a-entity>
+            </a-box> 
+            <a-box position="0 0 0" width="2.5" height="0.8" depth="0.1"></a-box>
+        </a-box>
 
 
     </a-scene>
