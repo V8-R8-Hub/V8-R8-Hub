@@ -1,0 +1,14 @@
+{
+  "name": "frontal-ende",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install_start": "npm i -g five-server@latest && five-server --port=8000",
+    "start": "five-server --port=8000"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
