@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
-<!--  five-server --port=8000 -->
 
 <head>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-</head>
-
+    <script src="aframe-rounded-component.js"></script>
+    
 </head>
 
 <body>
@@ -14,6 +13,14 @@
         <a-assets>
             <img id="ground" src="/cool-gray-61nfwad1bullevu4.jpg">
         </a-assets>
+
+        <a-entity id="rig" position="0 2 0">
+            <a-entity id="camera" camera look-controls wasd-controls>
+                <a-cursor></a-cursor>
+            </a-entity>
+        </a-entity>
+
+
         <!-- walls  ground celling gang gang-->
         <a-plane src="#ground" rotation="-90 0 0" width="30" height="30"></a-plane>
         <a-box src="#ground" position="0 5 -15" depth="2" width="30" height="20"></a-box>
@@ -21,17 +28,9 @@
         <a-box src="#ground" position="-15 5 0" rotation="0 90 0" depth="2" width="30" height="20"></a-box>
         <a-box src="#ground" position="15 5 0" rotation="0 90 0" depth="2" width="30" height="20"></a-box>
         <a-box src="#ground" position="0 15 0" rotation="90 0 0" depth="2" width="30" height="30"></a-box>
-        <!-- <a-camera wasd-controls-enabled=false></a-camera> -->
 
-        <!-- menu -->
-        <a-box position="0 2 -3" width="3" height="4" depth="0,5" color="#FFF">
-            <a-box position="0 1.2 0" width="2.5" height="0.8" depth="0.1">
-                <a-entity position="3.9 0 0.1"scale="9 9 9" text="value: MENU;color:black"></a-entity>
-            </a-box> 
-            <a-box position="0 0 0" width="2.5" height="0.8" depth="0.1"></a-box>
-        </a-box>
-
-
+       <!-- <a-box id="box" height="5" width="5" depth="5" color="#FFF" position="0 0 0"></a-box> -->
+       <script src="menu.js"></script>
     </a-scene>
 </body>
 
