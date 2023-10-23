@@ -17,25 +17,26 @@
             <img id="ground" src="/Matematik_i_mooncity.jpg">
             <img id="amongus" src="/cool-gray-61nfwad1bullevu4.jpg">
         </a-assets>
-        <a-entity geometry="primitive: plane; height: 15; width: 15" material="side: double; src: #amongus">
-            <a-xycontainer direction="row" style="color: red;">
+        <a-entity geometry="primitive: plane; height: 15; width: 15" material="side: double; src: #amongus"></a-entity>
+        <a-entity position="0 0 1">
+            <a-xycontainer direction="row" justifycontent="center">
                 <a-xybutton label="left"></a-xybutton>
-                <a-xycontainer justifyItems="end" direction="column" spacing="0.1" padding="0.2">
-                    <a-image src="#ground" width="3" height="3"></a-image>
-                    <a-image src="#ground" width="3" height="3"></a-image>
-                    <a-image src="#ground" width="3" height="3"></a-image>
-                </a-xycontainer>
-                <a-xycontainer justifyItems="end" direction="column" spacing="0.1" padding="0.2">
-                    <a-image src="#ground" width="3" height="3"></a-image>
-                    <a-image src="#ground" width="3" height="3"></a-image>
-                    <a-image src="#ground" width="3" height="3"></a-image>
+                <a-xycontainer direction="column">
 
-                </a-xycontainer>
-                <a-xycontainer justifyItems="end" direction="column" spacing="0.1" padding="0.2">
-                    <a-image src="#ground" width="3" height="3"></a-image>
-                    <a-image src="#ground" width="3" height="3"></a-image>
-                    <a-image src="#ground" width="3" height="3"></a-image>
-
+                    <a-xycontainer direction="row" spacing="0.2" padding="0.2">
+                        <a-image src="#ground" width="3" height="3"></a-image>
+                        <a-image src="#ground" width="3" height="3"></a-image>
+                        <a-image src="#ground" width="3" height="3"></a-image>
+                    </a-xycontainer>
+                    <a-xycontainer direction="row" spacing="0.2" padding="0.2">
+                        <a-image src="#ground" width="3" height="3"></a-image>
+                        <a-image src="#ground" width="3" height="3"></a-image>
+                        <a-image src="#ground" width="3" height="3"></a-image>
+                    </a-xycontainer>
+                    <a-xycontainer direction="row" spacing="0.2" padding="0.2">
+                        <a-image src="#ground" width="3" height="3"></a-image>
+                        <a-image src="#ground" width="3" height="3"></a-image>
+                    </a-xycontainer>
                 </a-xycontainer>
                 <a-xybutton label="right"></a-xybutton>
 
