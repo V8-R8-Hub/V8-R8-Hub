@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<!--  five-server --port=8000 -->
+
+<head>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://binzume.github.io/aframe-xylayout/dist/xylayout-all.min.js"></script>
+
+
+</head>
+
+</head>
+
+<body>
+    <a-scene>
+        <a-assets>
+            <img id="ground" src="/Matematik_i_mooncity.jpg">
+            <img id="amongus" src="/cool-gray-61nfwad1bullevu4.jpg">
+        </a-assets>
+        <a-entity geometry="primitive: plane; height: 15; width: 15" material="side: double; src: #amongus">
+            <a-xycontainer direction="row" style="color: red;">
+                <a-xybutton label="left"></a-xybutton>
+                <a-xycontainer justifyItems="end" direction="column" spacing="0.1" padding="0.2">
+                    <a-image src="#ground" width="3" height="3"></a-image>
+                    <a-image src="#ground" width="3" height="3"></a-image>
+                    <a-image src="#ground" width="3" height="3"></a-image>
+                </a-xycontainer>
+                <a-xycontainer justifyItems="end" direction="column" spacing="0.1" padding="0.2">
+                    <a-image src="#ground" width="3" height="3"></a-image>
+                    <a-image src="#ground" width="3" height="3"></a-image>
+                    <a-image src="#ground" width="3" height="3"></a-image>
+
+                </a-xycontainer>
+                <a-xycontainer justifyItems="end" direction="column" spacing="0.1" padding="0.2">
+                    <a-image src="#ground" width="3" height="3"></a-image>
+                    <a-image src="#ground" width="3" height="3"></a-image>
+                    <a-image src="#ground" width="3" height="3"></a-image>
+
+                </a-xycontainer>
+                <a-xybutton label="right"></a-xybutton>
+
+            </a-xycontainer>
+        </a-entity>
+        </a-plane>
+        </a-box>
+    </a-scene>
+</body>
+
+</html>
