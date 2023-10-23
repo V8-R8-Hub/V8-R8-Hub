@@ -17,10 +17,10 @@ namespace V8_R8_Hub.Services {
 
 		public async Task<IEnumerable<GameBrief>> GetGames() {
 			return await _connection.QueryAsync<GameBrief>(@"
-				SELECT g.public_id AS guid,
+				SELECT 
+					g.public_id AS guid,
 					g.name
 					g.description,
-					g.
 					tf.public_id AS thumbnail_guid
 					gf.public_id AS game_blob_guid
 					FROM games g
