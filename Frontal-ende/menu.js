@@ -6,6 +6,7 @@ menu.setAttribute("position", { x: -1.5, y: 0.5, z: -3 });
 menu.setAttribute('width', 3);
 menu.setAttribute('height', 4)
 
+
 function AddMenuItemsToMenu(menu) {
     var arr = ['Menu', 'Games', 'Options', 'Quit'];
     var y = 3;
@@ -17,19 +18,22 @@ function AddMenuItemsToMenu(menu) {
         menuitem.setAttribute("position", { x: 0.25, y: y, z: 0.01 });
         y -= 0.9
         if (arr[i] === 'Menu') {
-            menuitem.setAttribute('color', 'black')
-            AddTextMenuitem(menuitem, arr[i], '#FFF')
+            menuitem.setAttribute('color', 'black');
+            AddTextMenuitem(menuitem, arr[i], '#FFF');
         }
         else{
-            menuitem.setAttribute('color', 'grey')
-            AddTextMenuitem(menuitem, arr[i], 'black')
+            menuitem.setAttribute('color', 'grey');
+            AddTextMenuitem(menuitem, arr[i], 'black');
         }
+        menuitem.setAttribute('id', arr[i]);
+
+        console.log(menuitem);
     }
 }
 function AddTextMenuitem(menuitem, string, color) {
     var text = document.createElement('a-text')
     menuitem.appendChild(text)
-    text.setAttribute("position", { x: 0.25, y: 0.4, z: 0.01 });
+    text.setAttribute("position", { x: 0.05, y: 0.4, z: 0.01 });
     text.setAttribute("scale", { x: 3, y: 3, z: 3 });
     text.setAttribute("value", string);
     text.setAttribute('color', color);
@@ -37,12 +41,7 @@ function AddTextMenuitem(menuitem, string, color) {
 
 AddMenuItemsToMenu(menu);
 
-document.querySelector('#box').addEventListener('mousedown', function (evt) {
-    clickgames();
-});
-
-
-function clickgames() {
-    Ascene.parentNode.removeChild(menu);
+document.querySelector('#Quit').addEventListener('mousedown', function (evt){
+    menu.setAttribute('animation', {property: 'position', to: {x: -1.5, y: -10, z: -3}, dur: 2000, loop: 'false'})
     console.log("sus")
-}
+})
