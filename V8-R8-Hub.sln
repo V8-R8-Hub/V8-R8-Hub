@@ -5,9 +5,9 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "V8-R8-Hub", "V8-R8-Hub\V8-R8-Hub.csproj", "{560DF4C0-6B2A-4F42-8998-50B7E7E317A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbUpgrader", "DbUpgrader\DbUpgrader.csproj", "{F95929AD-5E78-4797-95A1-5248E3CC26E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbUpgrader", "DbUpgrader\DbUpgrader.csproj", "{F95929AD-5E78-4797-95A1-5248E3CC26E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{D62EADB0-E219-45AC-85AF-FF1D9CBC5097}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{D62EADB0-E219-45AC-85AF-FF1D9CBC5097}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
