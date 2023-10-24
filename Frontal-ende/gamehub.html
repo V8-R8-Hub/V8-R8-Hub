@@ -3,7 +3,7 @@
 <!--  five-server --port=8000 -->
 
 <head>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script type="text/javascript" src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://binzume.github.io/aframe-xylayout/dist/xylayout-all.min.js"></script>
 
 
@@ -13,29 +13,37 @@
 
 <body>
     <a-scene>
+        <script type="text/javascript" src="/GameHubScene.js"></script>
+
         <a-assets>
-            <img id="ground" src="/Matematik_i_mooncity.jpg">
-            <img id="amongus" src="/cool-gray-61nfwad1bullevu4.jpg">
+            <img id="mooncity" src="/Matematik_i_mooncity.jpg">
         </a-assets>
-        <a-entity geometry="primitive: plane; height: 15; width: 15" material="side: double; src: #amongus"></a-entity>
-        <a-entity position="0 0 1">
+        <a-GameScene> </a-GameScene>
+
+        <a-entity id="rig" position="0 5s 0">
+            <a-entity id="camera" camera look-controls wasd-controls>
+                <a-cursor></a-cursor>
+            </a-entity>
+        </a-entity>
+
+        <a-entity position="0 6 0">
             <a-xycontainer direction="row" justifycontent="center">
                 <a-xybutton label="left"></a-xybutton>
                 <a-xycontainer direction="column">
 
                     <a-xycontainer direction="row" spacing="0.2" padding="0.2">
-                        <a-image src="#ground" width="3" height="3"></a-image>
-                        <a-image src="#ground" width="3" height="3"></a-image>
-                        <a-image src="#ground" width="3" height="3"></a-image>
+                        <a-image src="#mooncity" width="3" height="3"></a-image>
+                        <a-image src="#mooncity" width="3" height="3"></a-image>
+                        <a-image src="#mooncity" width="3" height="3"></a-image>
                     </a-xycontainer>
                     <a-xycontainer direction="row" spacing="0.2" padding="0.2">
-                        <a-image src="#ground" width="3" height="3"></a-image>
-                        <a-image src="#ground" width="3" height="3"></a-image>
-                        <a-image src="#ground" width="3" height="3"></a-image>
+                        <a-image src="#mooncity" width="3" height="3"></a-image>
+                        <a-image src="#mooncity" width="3" height="3"></a-image>
+                        <a-image src="#mooncity" width="3" height="3"></a-image>
                     </a-xycontainer>
                     <a-xycontainer direction="row" spacing="0.2" padding="0.2">
-                        <a-image src="#ground" width="3" height="3"></a-image>
-                        <a-image src="#ground" width="3" height="3"></a-image>
+                        <a-image src="#mooncity" width="3" height="3"></a-image>
+                        <a-image src="#mooncity" width="3" height="3"></a-image>
                     </a-xycontainer>
                 </a-xycontainer>
                 <a-xybutton label="right"></a-xybutton>
