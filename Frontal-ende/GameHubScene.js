@@ -1,4 +1,6 @@
 
+
+
 AFRAME.registerComponent('GameScene', {
     init: function () {
         console.log("SUS");
