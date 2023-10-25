@@ -6,51 +6,35 @@
     <script type="text/javascript" src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://binzume.github.io/aframe-xylayout/dist/xylayout-all.min.js"></script>
 
-
+    <script defer type="text/javascript" src="/GameHubScene.js"></script>
+    <script defer type="text/javascript" src="GameGrid.js "></script>
 </head>
 
 </head>
 
 <body>
-    <script type="text/javascript" src="/GameHubScene.js"></script>
 
     <a-scene>
 
         <a-assets>
             <img id="mooncity" src="/Matematik_i_mooncity.jpg">
+
+
         </a-assets>
         <a-GameScene> </a-GameScene>
-
         <a-entity id="rig" position="0 5s 0">
             <a-entity id="camera" camera look-controls wasd-controls>
                 <a-cursor></a-cursor>
             </a-entity>
         </a-entity>
 
-        <a-entity position="0 6 0">
-            <a-xycontainer direction="row" justifycontent="center">
-                <a-xybutton label="left"></a-xybutton>
-                <a-xycontainer direction="column">
+        <a-gamegrid
+            games="mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity"
+            gamegrid=""></a-gamegrid>
 
-                    <a-xycontainer direction="row" spacing="0.2" padding="0.2">
-                        <a-image src="#mooncity" width="3" height="3"></a-image>
-                        <a-image src="#mooncity" width="3" height="3"></a-image>
-                        <a-image src="#mooncity" width="3" height="3"></a-image>
-                    </a-xycontainer>
-                    <a-xycontainer direction="row" spacing="0.2" padding="0.2">
-                        <a-image src="#mooncity" width="3" height="3"></a-image>
-                        <a-image src="#mooncity" width="3" height="3"></a-image>
-                        <a-image src="#mooncity" width="3" height="3"></a-image>
-                    </a-xycontainer>
-                    <a-xycontainer direction="row" spacing="0.2" padding="0.2">
-                        <a-image src="#mooncity" width="3" height="3"></a-image>
-                        <a-image src="#mooncity" width="3" height="3"></a-image>
-                    </a-xycontainer>
-                </a-xycontainer>
-                <a-xybutton label="right"></a-xybutton>
+        d
 
-            </a-xycontainer>
-        </a-entity>
+
         </a-plane>
         </a-box>
     </a-scene>

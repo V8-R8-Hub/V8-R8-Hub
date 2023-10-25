@@ -22,6 +22,8 @@ AFRAME.registerComponent('GameScene', {
 
 
 
+
+
 function CreateImgAsset(id, src) {
     let scene = document.querySelector("a-scene");
     let wallAsset = document.createElement("a-assets");
