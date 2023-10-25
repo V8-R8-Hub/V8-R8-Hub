@@ -1,21 +1,38 @@
 //scene til hele lortet
 var Ascene = document.querySelector('a-scene');
+var cameraRig = document.getElementById('cameraRig');
+
+var laser = document.createElement('a-entity')
 
 //seje hånd controls til vr brug 
-var rightHand = document.createElement('a-entity');
-rightHand.setAttribute('id', 'rightHand');
-rightHand.setAttribute('mixin', 'hand');
-rightHand.setAttribute('oculus-touch-controls', { hand: 'right' });
-rightHand.setAttribute('laser-controls', '');
+function createRightHand(){
+    var rightHand = document.createElement('a-entity');
+    rightHand.setAttribute('id', 'rightHand');
+    rightHand.setAttribute('mixin', 'hand');
+    rightHand.setAttribute('oculus-touch-controls', { hand: 'right' });
+    cameraRig.appendChild(rightHand);
 
+    }
+
+function createLeftHand(){
 var leftHand = document.createElement('a-entity');
 leftHand.setAttribute('id', 'leftHand');
 leftHand.setAttribute('mixin', 'hand');
 leftHand.setAttribute('oculus-touch-controls', { hand: 'left' });
-
-var cameraRig = document.getElementById('cameraRig');
-cameraRig.appendChild(rightHand);
 cameraRig.appendChild(leftHand);
+}
+
+
+function removeHands(){
+    document.querySelector('#rightHand').remove();
+    document.querySelector('#leftHand').remove();
+}
+createRightHand()
+createLeftHand()
+
+
+
+
 
 //sej menu 
 var menu = document.createElement('a-rounded');
@@ -26,7 +43,6 @@ menu.setAttribute('height', 4)
 
 //nem måde at add menu items
 function AddMenuItemsToMenu(menu, itemarr, supMenuItemWidth) {
-    console.log('sus')
     var y = 3;
     for (let i = 0; i <= itemarr.length - 1; i++) {
         var menuitem = document.createElement('a-rounded')
@@ -59,7 +75,7 @@ function AddText(item, string, color) {
     text.setAttribute('color', color);
 }
 
-//add eventlisteners til menuitems
+//add eventlisteners til menu items
 function AddEvents() {
     // document.querySelector('#Quit').addEventListener('mousedown', function (evt){
     //     menu.setAttribute('animation', {property: 'position', to: {x: -1.5, y: -10, z: -3}, dur: 2000, loop: 'false'})
@@ -75,34 +91,40 @@ function AddEvents() {
         AddMenuItemsToMenu(menu, arr, 1.7);
         var back = document.querySelector('#Back');
         var left = document.querySelector('#Left');
+        var rightHand = document.querySelector('#rightHand')
+        var leftHand = document.querySelector('#leftHand')
         var right = document.querySelector('#Right');
         back.setAttribute('width', 2.5)
 
         if (rightHand.hasAttribute('laser-controls')) {
             right.setAttribute('color', 'green');
             right.firstChild.setAttribute('color', '#FFF');
-            console.log(rightHand.getAttribute('laser-controls'))
         }
         else {
-            left.setAttribute('color', 'green')
-            left.firstChild.setAttribute('color', '#FFF')
-            console.log(leftHand.getAttribute('laser-controls'))
+            left.setAttribute('color', 'green');
+            left.firstChild.setAttribute('color', '#FFF');
         }
 
         right.addEventListener('mousedown', function (evt) {
-            leftHand.removeAttribute('laser-controls');
-            rightHand.setAttribute('laser-controls', {hand: 'right'});
-            left.setAttribute('color', 'grey')
-            left.firstChild.setAttribute('color', 'black')
+            removeHands();
+            createRightHand();
+            rightHand.setAttribute('laser-controls', {hand: 'right'})
+            createLeftHand();
+            left.setAttribute('color', 'grey');
+            left.firstChild.setAttribute('color', 'black');
             right.setAttribute('color', 'green');
             right.firstChild.setAttribute('color', '#FFF');
         });
 
         left.addEventListener('mousedown', function (evt) {
-            rightHand.removeAttribute('laser-controls');
-            leftHand.setAttribute('laser-controls', {hand: 'left'});
-            right.setAttribute('color', 'grey')
-            right.firstChild.setAttribute('color', 'black')
+            removeHands();
+            createLeftHand();
+            
+            leftHand.setAttribute('laser-controls', {hand: 'left'})
+            createRightHand();
+
+            right.setAttribute('color', 'grey');
+            right.firstChild.setAttribute('color', 'black');
             left.setAttribute('color', 'green');
             left.firstChild.setAttribute('color', '#FFF');
         });
@@ -114,10 +136,10 @@ function AddEvents() {
 
     });
 }
-// clear menu xDDDDD
+
 function ClearMenu() {
     while (menu.firstChild) {
-        menu.removeChild(menu.lastChild)
+        menu.removeChild(menu.lastChild);
     }
 }
 
