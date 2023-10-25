@@ -1,0 +1,17 @@
+﻿@page "{guid:guid}"
+@model V8_R8_Hub.Pages.Admin.GameModel
+@{
+}
+
+<html>
+<head>
+    <title>Hello world!</title>
+</head>
+<body>
+    <div>
+        <p>Name: @Model.GameBrief.Name</p>
+        <p>Desription: @Model.GameBrief.Description</p>
+        <img src="/PublicFile/@Model.GameBrief.ThumbnailGuid.ToString()"/>
+    </div>
+</body>
+</html>

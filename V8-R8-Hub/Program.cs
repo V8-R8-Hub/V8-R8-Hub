@@ -18,6 +18,7 @@ builder.Services.AddSession(options => {
 });
 
 builder.Services.AddTransient<IPublicFileService, PublicFileService>();
+builder.Services.AddTransient<ISafeFileService, SafeFileService>();
 builder.Services.AddTransient<IGameAssetService, GameAssetService>();
 builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<IDbConnector, DbConnector>();

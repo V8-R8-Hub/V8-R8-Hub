@@ -1,4 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System.Net;
+using System.Net.Http.Headers;
+using V8_R8_Hub.Models.Exceptions;
+using V8_R8_Hub.Models.Internal;
+using V8_R8_Hub.Models.Request;
 using V8_R8_Hub.Models.Response;
 using V8_R8_Hub.Services;
 
@@ -8,10 +14,16 @@ namespace V8_R8_Hub.Controllers {
 	public class GameController : ControllerBase {
 		private readonly IGameAssetService _gameAssetService;
 		private readonly IGameService _gameService;
+		private readonly IPublicFileService _publicFileService;
+		private readonly ISafeFileService _safeFileService;
+		private readonly ILogger<GameController> _logger;
 
-		public GameController(IGameAssetService gameAssetService, IGameService gameService) {
+		public GameController(IGameAssetService gameAssetService, IGameService gameService, IPublicFileService publicFileService, ISafeFileService safeFileService, ILogger<GameController> gameController) {
 			_gameAssetService = gameAssetService;
 			_gameService = gameService;
+			_publicFileService = publicFileService;
+			_safeFileService = safeFileService;
+			_logger = gameController;
 		}
 
 		[HttpGet("benis", Name = "HelloWorld")]
@@ -19,23 +31,21 @@ namespace V8_R8_Hub.Controllers {
 			return Ok("Hello World!");
 		}
 
-		[HttpPost("Game/{uuid:guid}", Name = "CreateGame")]
-		public IActionResult CreateGame(Guid uuid, IFormFile gameFile) {
-			return Ok("Hello World!");
-		}
-
-		[HttpGet("Game/{guid:guid}/{path}", Name = "GetGameAsset")]
-		[ProducesResponseType(typeof(FileContentResult), 200)]
-		[ProducesResponseType(404)]
-		public async Task<IActionResult> GetGameAsset(Guid guid, string path) {
-			var asset = await _gameAssetService.GetGameAsset(guid, path);
-			if (asset == null) {
-				return NotFound();
+		[HttpPost("", Name = "CreateGame")]
+		[ProducesResponseType(415)]
+		[ProducesResponseType(typeof(Guid), 200)]
+		public async Task<IActionResult> CreateGame([FromForm] CreateGameRequestModel requestModel) {
+			try {
+				var gameId = await _gameService.CreateGame(requestModel.Name, requestModel.Description, VirtualFile.From(requestModel.GameFile), VirtualFile.From(requestModel.ThumbnailFile));
+				return Ok(gameId.Guid);
+			} catch (DisallowedMimeTypeException ex) {
+				_logger.LogWarning("User tried to upload game with unsupported mime type");
+				_logger.LogWarning(ex.Message);
+				return StatusCode(415);
 			}
-			return File(asset.ContentBlob, asset.MimeType, asset.FileName);
 		}
 
-		[HttpGet("Game", Name = "GetGames")]
+		[HttpGet("", Name = "GetGames")]
 		[ProducesResponseType(typeof(IEnumerable<GameBriefResponse>), 200)]
 		public async Task<IActionResult> GetGames() {
 			var games = await _gameService.GetGames();
@@ -46,6 +56,17 @@ namespace V8_R8_Hub.Controllers {
 				ThumbnailUrl = Url.Action("GetFile", "PublicFile", new { fileGuid = gameBrief.ThumbnailGuid }),
 				GameBlobUrl = Url.Action("GetFile", "PublicFile", new { fileGuid = gameBrief.GameBlobGuid })
 			}));
+		}
+
+		[HttpGet("{guid:guid}/{path}", Name = "GetGameAsset")]
+		[ProducesResponseType(typeof(FileContentResult), 200)]
+		[ProducesResponseType(404)]
+		public async Task<IActionResult> GetGameAsset(Guid guid, string path) {
+			var asset = await _gameAssetService.GetGameAsset(guid, path);
+			if (asset == null) {
+				return NotFound();
+			}
+			return File(asset.ContentBlob, asset.MimeType, asset.FileName);
 		}
 	}
 }

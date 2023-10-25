@@ -1,8 +1,8 @@
 ﻿namespace V8_R8_Hub.Models.DB {
 	public record GameAssetDbModel {
-		public required int id;
-		public required int game_id;
-		public required int file_id;
-		public required string path;
+		public required int Id;
+		public required int GameId;
+		public required int FileId;
+		public required string Path;
 	}
 }
