@@ -8,6 +8,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSwaggerGen();
 
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
@@ -32,6 +33,11 @@ if (!app.Environment.IsDevelopment()) {
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+if (app.Environment.IsDevelopment()) {
+	app.UseSwagger();
+	app.UseSwaggerUI();
+}
 
 app.UseRouting();
 

@@ -27,11 +27,6 @@ namespace V8_R8_Hub.Controllers {
 			_logger = gameController;
 		}
 
-		[HttpGet("benis", Name = "HelloWorld")]
-		public IActionResult HelloWorld() {
-			return Ok("Hello World!");
-		}
-
 		[HttpPost("", Name = "CreateGame")]
 		[ProducesResponseType(415)]
 		[ProducesResponseType(typeof(Guid), 200)]
@@ -95,7 +90,7 @@ namespace V8_R8_Hub.Controllers {
 		[HttpDelete("{guid:guid}/{path}", Name = "DeleteGameAsset")]
 		[ProducesResponseType(typeof(GameAssetBrief), 200)]
 		[ProducesResponseType(404)]
-		public async Task<IActionResult> DeleteGameAsset(Guid guid, string path) {
+		public async Task<IActionResult> DeleteGameAsset(Guid guid, string path		) {
 			try {
 				await _gameAssetService.DeleteGameAsset(guid, path);
 				return Ok();
