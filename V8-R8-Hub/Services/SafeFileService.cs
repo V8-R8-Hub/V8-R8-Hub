@@ -18,7 +18,7 @@ namespace V8_R8_Hub.Services {
 
 		public async Task<ObjectIdentifier> CreateFileFrom(VirtualFile file, ISet<string> allowedMimeTypes) {
 			if (file.MimeType == null || !allowedMimeTypes.Contains(file.MimeType)) {
-				throw new DisallowedMimeTypeException("Mime type of " + file.MimeType + " is not allowed");
+				throw new DisallowedMimeTypeException(file.MimeType, "Mime type of " + file.MimeType + " is not allowed");
 			}
 			using (var memoryStream = new MemoryStream()) {
 				using var stream = file.GetStream();

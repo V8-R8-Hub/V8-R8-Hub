@@ -17,10 +17,10 @@ namespace DbUpgrader.Upgraders {
 			await connection.ExecuteQuery(@"
 				CREATE TABLE public_files (
 					id SERIAL PRIMARY KEY,
-					public_id UUID UNIQUE DEFAULT gen_random_uuid(),
-					file_name TEXT,
-					mime_type TEXT,
-					content_blob bytea
+					public_id UUID NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+					file_name TEXT NOT NULL,
+					mime_type TEXT NOT NULL,
+					content_blob bytea NOT NULL
 				);
 			");
 		}

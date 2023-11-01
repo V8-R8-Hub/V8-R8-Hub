@@ -9,6 +9,7 @@ namespace V8_R8_Hub.Services {
 		Task<ISet<string>> GetAllowedGameMimeTypes();
 		Task<ISet<string>> GetAllowedThumbnailMimeTypes();
         Task<GameBrief> GetGame(Guid guid);
+        Task<int> GetGameId(Guid publicId);
         Task<IEnumerable<GameBrief>> GetGames();
 	}
 
@@ -51,7 +52,15 @@ namespace V8_R8_Hub.Services {
 				""", new {
 				Guid = guid
 			});
-        }
+		}
+
+		public async Task<int> GetGameId(Guid publicId) {
+			return await _connection.ExecuteScalarAsync<int>("""
+				SELECT id FROM games WHERE public_id = @PublicId
+			""", new {
+				PublicId = publicId
+			});
+		}
 
 		public async Task<ObjectIdentifier> CreateGame(string name, string description, VirtualFile gameFile, VirtualFile thumbnailFile) {
 			_connection.Open();

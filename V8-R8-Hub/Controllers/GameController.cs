@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Net.Http.Headers;
@@ -40,7 +41,7 @@ namespace V8_R8_Hub.Controllers {
 				return Ok(gameId.Guid);
 			} catch (DisallowedMimeTypeException ex) {
 				_logger.LogWarning("User tried to upload game with unsupported mime type");
-				_logger.LogWarning(ex.Message);
+				_logger.LogWarning("Details: {Message}", ex.Message);
 				return StatusCode(415);
 			}
 		}
@@ -67,6 +68,42 @@ namespace V8_R8_Hub.Controllers {
 				return NotFound();
 			}
 			return File(asset.ContentBlob, asset.MimeType, asset.FileName);
+		}
+
+		[HttpPost("{guid:guid}", Name = "CreateGameAsset")]
+		[ProducesResponseType(typeof(GameAssetBrief), 200)]
+		[ProducesResponseType(typeof(string), 400)]
+		[ProducesResponseType(404)]
+		public async Task<IActionResult> CreateGameAsset(Guid guid, IFormFile assetFile) {
+			try {
+				return Ok(await _gameAssetService.AddGameAsset(guid, VirtualFile.From(assetFile)));
+			} catch (DisallowedMimeTypeException ex) {
+				_logger.LogWarning("User tried to upload game with unsupported mime type");
+				_logger.LogWarning("Details: {Message}", ex.Message);
+				return BadRequest($"Mime type of '" + ex.GivenMimeType + "' is not allowed");
+			} catch (DuplicateAssetException ex) {
+				_logger.LogWarning("User tried to upload game asset with duplicate file name");
+				_logger.LogWarning("Details: {Message}", ex.Message);
+				return BadRequest("An asset with that filename already exists");
+			} catch (UnknownGameException ex) {
+				_logger.LogWarning("User tried to upload game asset for unknown game");
+				_logger.LogWarning("Details: {Message}", ex.Message);
+				return NotFound("The given guid does not correspond with any game");
+			}
+		}
+
+		[HttpDelete("{guid:guid}/{path}", Name = "DeleteGameAsset")]
+		[ProducesResponseType(typeof(GameAssetBrief), 200)]
+		[ProducesResponseType(404)]
+		public async Task<IActionResult> DeleteGameAsset(Guid guid, string path) {
+			try {
+				await _gameAssetService.DeleteGameAsset(guid, path);
+				return Ok();
+			} catch (UnknownGameException ex) {
+				_logger.LogWarning("User tried to delete game asset for unknown game");
+				_logger.LogWarning("Details: {Message}", ex.Message);
+				return NotFound("The given guid does not correspond with any game");
+			}
 		}
 	}
 }
