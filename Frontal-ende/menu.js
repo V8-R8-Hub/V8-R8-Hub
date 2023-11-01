@@ -5,34 +5,29 @@ var cameraRig = document.getElementById('cameraRig');
 var laser = document.createElement('a-entity')
 
 //seje hånd controls til vr brug 
-function createRightHand(){
+function createRightHand() {
     var rightHand = document.createElement('a-entity');
     rightHand.setAttribute('id', 'rightHand');
     rightHand.setAttribute('mixin', 'hand');
     rightHand.setAttribute('oculus-touch-controls', { hand: 'right' });
     cameraRig.appendChild(rightHand);
-
-    }
-
-function createLeftHand(){
-var leftHand = document.createElement('a-entity');
-leftHand.setAttribute('id', 'leftHand');
-leftHand.setAttribute('mixin', 'hand');
-leftHand.setAttribute('oculus-touch-controls', { hand: 'left' });
-cameraRig.appendChild(leftHand);
 }
 
+function createLeftHand() {
+    var leftHand = document.createElement('a-entity');
+    leftHand.setAttribute('id', 'leftHand');
+    leftHand.setAttribute('mixin', 'hand');
+    leftHand.setAttribute('oculus-touch-controls', { hand: 'left' });
+    cameraRig.appendChild(leftHand);
+}
 
-function removeHands(){
+function removeHands() {
     document.querySelector('#rightHand').remove();
     document.querySelector('#leftHand').remove();
 }
 createRightHand()
+document.querySelector('#rightHand').setAttribute('laser-controls', '')
 createLeftHand()
-
-
-
-
 
 //sej menu 
 var menu = document.createElement('a-rounded');
@@ -106,10 +101,10 @@ function AddEvents() {
         }
 
         right.addEventListener('mousedown', function (evt) {
-            removeHands();
-            createRightHand();
-            rightHand.setAttribute('laser-controls', {hand: 'right'})
-            createLeftHand();
+            // removeHands();
+            // createRightHand();
+            // rightHand.setAttribute('laser-controls', { hand: 'right' })
+            // createLeftHand();
             left.setAttribute('color', 'grey');
             left.firstChild.setAttribute('color', 'black');
             right.setAttribute('color', 'green');
@@ -117,12 +112,10 @@ function AddEvents() {
         });
 
         left.addEventListener('mousedown', function (evt) {
-            removeHands();
-            createLeftHand();
-            
-            leftHand.setAttribute('laser-controls', {hand: 'left'})
-            createRightHand();
-
+            // removeHands();
+            // createLeftHand();
+            // leftHand.setAttribute('laser-controls', { hand: 'left' })
+            // createRightHand();
             right.setAttribute('color', 'grey');
             right.firstChild.setAttribute('color', 'black');
             left.setAttribute('color', 'green');
