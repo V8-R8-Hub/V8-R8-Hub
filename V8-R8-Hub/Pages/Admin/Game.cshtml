@@ -11,18 +11,18 @@
 	<div>
 		<p>Name: @Model.GameBrief.Name</p>
 		<p>Desription: @Model.GameBrief.Description</p>
-		<img src="/PublicFile/@Model.GameBrief.ThumbnailGuid.ToString()" />
-		<form method="POST" action="/api/Game/@Model.GameBrief.Guid" enctype="multipart/form-data" id="add-link-form">
-			<input type="file" name="assetFile">
-			<input type="submit" value="Add">
+		<img src="@Url.Action("GetFile", "PublicFile", new {fileGuid = @Model.GameBrief.ThumbnailGuid})" />
+		<form method="POST" action="@Url.Action("CreateGameAssets", "Game", new {guid = Model.GameBrief.Guid})" enctype="multipart/form-data" id="add-link-form">
+			<input type="file" name="assetFiles" accept="@Model.AllowedAssetMimeTypesString" multiple>
+			<input type="submit" value="Add asset">
 		</form>
 		<p id="error-container"></p>
 		<ul>
 			@foreach (var asset in Model.GameAssets) {
 				<li>
-					<a href="/api/Game/@Model.GameBrief.Guid/@asset.Path">@asset.Path</a>
+					<a href="@Url.Action("GetGameAsset", "Game", new {guid = Model.GameBrief.Guid, path = asset.Path})">@asset.Path</a>
 					-
-					<form method="DELETE" action="/api/Game/@Model.GameBrief.Guid/@asset.Path" class="asset-delete-form" style="display: inline-block;">
+					<form method="DELETE" action="@Url.Action("DeleteGameAsset", "Game", new {guid = asset.Path, path = asset.Path})" class="asset-delete-form" style="display: inline-block;">
 						<input type="submit" value="x">
 					</form>
 				</li>

@@ -65,13 +65,13 @@ namespace V8_R8_Hub.Controllers {
 			return File(asset.ContentBlob, asset.MimeType, asset.FileName);
 		}
 
-		[HttpPost("{guid:guid}", Name = "CreateGameAsset")]
+		[HttpPost("{guid:guid}", Name = "CreateGameAssets")]
 		[ProducesResponseType(typeof(GameAssetBrief), 200)]
 		[ProducesResponseType(typeof(string), 400)]
 		[ProducesResponseType(404)]
-		public async Task<IActionResult> CreateGameAsset(Guid guid, IFormFile assetFile) {
+		public async Task<IActionResult> CreateGameAssets(Guid guid, IFormFile[] assetFiles) {
 			try {
-				return Ok(await _gameAssetService.AddGameAsset(guid, VirtualFile.From(assetFile)));
+				return Ok(await _gameAssetService.AddGameAssets(guid, assetFiles.Select(VirtualFile.From)));
 			} catch (DisallowedMimeTypeException ex) {
 				_logger.LogWarning("User tried to upload game with unsupported mime type");
 				_logger.LogWarning("Details: {Message}", ex.Message);
