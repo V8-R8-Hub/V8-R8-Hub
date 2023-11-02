@@ -9,23 +9,22 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DbUpgrader.Upgraders {
-	internal class AddSessionTable : Upgrader {
-		public AddSessionTable(IConnectionFactory connectionFactory)
-			: base(nameof(AddSessionTable), connectionFactory) { }
+	internal class AddWebGroup : Upgrader {
+		public AddWebGroup(IConnectionFactory connectionFactory)
+			: base(nameof(AddWebGroup), connectionFactory) { }
 
 		protected override async Task UpInternal(NpgsqlConnection connection) {
 			await connection.ExecuteQuery(@"
-				CREATE TABLE sessions (
-					id SERIAL PRIMARY KEY,
-					session_key TEXT NOT NULL UNIQUE
-				);
+				CREATE ROLE v8_r8_hub_api_group WITH
+					NOLOGIN;
 			");
 		}
 
 		protected override async Task DownInternal(NpgsqlConnection connection) {
 			await connection.ExecuteQuery(@"
-				DROP TABLE sessions;
+				DROP ROLE v8_r8_hub_api_group;
 			");
 		}
+
 	}
 }

@@ -9,22 +9,25 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DbUpgrader.Upgraders {
-	internal class AddSessionTable : Upgrader {
-		public AddSessionTable(IConnectionFactory connectionFactory)
-			: base(nameof(AddSessionTable), connectionFactory) { }
+	internal class AddPublicFileTable : Upgrader {
+		public AddPublicFileTable(IConnectionFactory connectionFactory)
+			: base(nameof(AddPublicFileTable), connectionFactory) { }
 
 		protected override async Task UpInternal(NpgsqlConnection connection) {
 			await connection.ExecuteQuery(@"
-				CREATE TABLE sessions (
+				CREATE TABLE public_files (
 					id SERIAL PRIMARY KEY,
-					session_key TEXT NOT NULL UNIQUE
+					public_id UUID NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+					file_name TEXT NOT NULL,
+					mime_type TEXT NOT NULL,
+					content_blob bytea NOT NULL
 				);
 			");
 		}
 
 		protected override async Task DownInternal(NpgsqlConnection connection) {
 			await connection.ExecuteQuery(@"
-				DROP TABLE sessions;
+				DROP TABLE public_files;
 			");
 		}
 	}

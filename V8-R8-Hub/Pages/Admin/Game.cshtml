@@ -1,0 +1,67 @@
+﻿@page "{guid:guid}"
+@model V8_R8_Hub.Pages.Admin.GameModel
+@{
+}
+
+<html>
+<head>
+	<title>Hello world!</title>
+</head>
+<body>
+	<div>
+		<p>Name: @Model.GameBrief.Name</p>
+		<p>Desription: @Model.GameBrief.Description</p>
+		<img src="/PublicFile/@Model.GameBrief.ThumbnailGuid.ToString()" />
+		<form method="POST" action="/api/Game/@Model.GameBrief.Guid" enctype="multipart/form-data" id="add-link-form">
+			<input type="file" name="assetFile">
+			<input type="submit" value="Add">
+		</form>
+		<p id="error-container"></p>
+		<ul>
+			@foreach (var asset in Model.GameAssets) {
+				<li>
+					<a href="/api/Game/@Model.GameBrief.Guid/@asset.Path">@asset.Path</a>
+					-
+					<form method="DELETE" action="/api/Game/@Model.GameBrief.Guid/@asset.Path" class="asset-delete-form" style="display: inline-block;">
+						<input type="submit" value="x">
+					</form>
+				</li>
+			}
+		</ul>
+
+		<script type="text/javascript">
+			let addLinkForm = document.getElementById("add-link-form");
+			let errorContainer = document.getElementById("error-container");
+			addLinkForm.addEventListener("submit", async (ev) => {
+				ev.preventDefault();
+				let formData = new FormData(addLinkForm);
+				let response = await fetch(addLinkForm.action, {
+					method: addLinkForm.method,
+					body: formData
+				})
+				if (response.status == 200) {
+					location.reload();
+					return;
+				}
+				errorContainer.innerText = response.status + " - " + await response.text();
+			});
+			let assetDeleteForms = document.getElementsByClassName("asset-delete-form");
+			for (let form of assetDeleteForms) {
+				form.addEventListener("submit", async (ev) => {
+					ev.preventDefault();
+					let formData = new FormData(form);
+					let response = await fetch(form.action, {
+						method: "DELETE",
+						body: formData
+					})
+					if (response.status == 200) {
+						location.reload();
+						return;
+					}
+					errorContainer.innerText = response.status + " - " + await response.text();
+				});
+			}
+		</script>
+	</div>
+</body>
+</html>

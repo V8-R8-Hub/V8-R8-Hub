@@ -1,0 +1,29 @@
+﻿@page
+@model V8_R8_Hub.Pages.Admin.CreateGameModel
+@{
+    string AllowedGameMimeTypesString = ViewData["AllowedGameMimeTypesString"] as string;
+    string AllowedThumbnailMimeTypesString = ViewData["AllowedThumbnailMimeTypesString"] as string;
+    string CreateGameActionPath = Url.Action("CreateGame", "Game");
+}
+<html>
+<head>
+    <title>Hello world!</title>
+</head>
+<body>
+    <form method="POST" action="@CreateGameActionPath" enctype="multipart/form-data">
+        <label for="Name">Game name:</label>
+        <input name="Name"/>
+        <br />
+        <label for="Name">Description:</label>
+        <input name="Description" />
+        <br />
+        <label for="Name">Game file:</label>
+        <input type="file" name="GameFile" accept="@AllowedGameMimeTypesString">
+        <br />
+        <label for="Name">Thumbnail file:</label>
+        <input type="file" name="ThumbnailFile" accept="@AllowedThumbnailMimeTypesString" />
+        <br/>
+        <input type="submit" />
+    </form>
+</body>
+</html>
