@@ -30,9 +30,9 @@ namespace V8_R8_Hub.Services {
 					g.description,
 					tf.public_id AS thumbnail_guid,
 					gf.public_id AS game_blob_guid
-					FROM games g
-					INNER JOIN public_files tf ON g.thumbnail_file_id = tf.id
-					INNER JOIN public_files gf ON g.game_file_id = gf.id
+				FROM games g
+				INNER JOIN public_files tf ON g.thumbnail_file_id = tf.id
+				INNER JOIN public_files gf ON g.game_file_id = gf.id
 			""");
 		}
 
@@ -84,12 +84,11 @@ namespace V8_R8_Hub.Services {
 			);
 			transaction.Commit();
 			return gameId;
-
 		}
 
 		public Task<ISet<string>> GetAllowedGameMimeTypes() {
 			return Task.FromResult<ISet<string>>(new HashSet<string>() {
-				"text/javascript"
+				"text/html"
 			});
 		}
 
