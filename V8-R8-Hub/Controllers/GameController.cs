@@ -27,6 +27,11 @@ namespace V8_R8_Hub.Controllers {
 			_logger = gameController;
 		}
 
+		/// <summary>
+		/// Creates a game with the given parameters
+		/// </summary>
+		/// <response code="200">Game is created and the new game guid is returned</response>
+		/// <response code="415">Game or thumbnail has unsupported mime type</response>
 		[HttpPost("", Name = "CreateGame")]
 		[ProducesResponseType(415)]
 		[ProducesResponseType(typeof(Guid), 200)]
@@ -41,6 +46,10 @@ namespace V8_R8_Hub.Controllers {
 			}
 		}
 
+		/// <summary>
+		/// Get a list of all the games available in the hub
+		/// </summary>
+		/// <response code="200">Success</response>
 		[HttpGet("", Name = "GetGames")]
 		[ProducesResponseType(typeof(IEnumerable<GameBriefResponse>), 200)]
 		public async Task<IActionResult> GetGames() {
@@ -54,6 +63,11 @@ namespace V8_R8_Hub.Controllers {
 			}));
 		}
 
+		/// <summary>
+		/// Gets a game asset for a sepcific game
+		/// </summary>
+		/// <response code="200">Success and the asset blob is the response</response>
+		/// <response code="404">Either the game guid or the asset path does not correspond with an asset</response>
 		[HttpGet("{guid:guid}/{path}", Name = "GetGameAsset")]
 		[ProducesResponseType(typeof(FileContentResult), 200)]
 		[ProducesResponseType(404)]
@@ -65,6 +79,12 @@ namespace V8_R8_Hub.Controllers {
 			return File(asset.ContentBlob, asset.MimeType, asset.FileName);
 		}
 
+		/// <summary>
+		/// Creates a game asset for a specific game
+		/// </summary>
+		/// <response code="200">Success</response>
+		/// <response code="400">The asset has unsupported mime type or the name already exists</response>
+		/// <response code="404">A game with the given GUID does not exist</response>
 		[HttpPost("{guid:guid}", Name = "CreateGameAsset")]
 		[ProducesResponseType(typeof(GameAssetBrief), 200)]
 		[ProducesResponseType(typeof(string), 400)]
@@ -87,6 +107,11 @@ namespace V8_R8_Hub.Controllers {
 			}
 		}
 
+		/// <summary>
+		/// Deletes a game asset for a specific game
+		/// </summary>
+		/// <response code="200">Success</response>
+		/// <response code="404">Either the game guid or the asset path does not correspond with an asset</response>
 		[HttpDelete("{guid:guid}/{path}", Name = "DeleteGameAsset")]
 		[ProducesResponseType(typeof(GameAssetBrief), 200)]
 		[ProducesResponseType(404)]

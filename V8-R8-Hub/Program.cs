@@ -1,3 +1,4 @@
+using Microsoft.OpenApi.Models;
 using V8_R8_Hub.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +9,17 @@ builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c => {
+	c.SwaggerDoc("v1",
+		new OpenApiInfo {
+			Title = "V8-R8-Hub",
+			Version = "v1"
+		}
+	);
+
+	var filePath = Path.Combine(AppContext.BaseDirectory, "V8-R8-Hub.xml");
+	c.IncludeXmlComments(filePath);
+});
 
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 

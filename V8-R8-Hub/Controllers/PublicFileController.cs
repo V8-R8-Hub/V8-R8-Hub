@@ -10,7 +10,11 @@ namespace V8_R8_Hub.Controllers {
 		public PublicFileController(IPublicFileService fileService) {
 			_fileService = fileService;
 		}
-
+		/// <summary>
+		/// Gets the file with the given guid
+		/// </summary>
+		/// <response code="200">Success and the file blob is the response</response>
+		/// <response code="404">The file does not exist</response>
 		[HttpGet("{fileGuid:guid}", Name = "GetFile")]
 		[ProducesResponseType(typeof(FileContentResult), 200)]
 		[ProducesResponseType(404)]
