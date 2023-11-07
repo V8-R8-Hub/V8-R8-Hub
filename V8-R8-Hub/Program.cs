@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using V8_R8_Hub.Middleware;
 using V8_R8_Hub.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +27,7 @@ Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 builder.Services.AddSession(options => {
 	options.IdleTimeout = TimeSpan.FromHours(1);
 	options.Cookie.HttpOnly = true;
-	options.Cookie.IsEssential = true;
+	options.Cookie.IsEssential = false;
 });
 
 builder.Services.AddTransient<IPublicFileService, PublicFileService>();
@@ -55,6 +56,8 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.UseSession();
+
+app.UsePersistentAuth();
 
 app.MapRazorPages();
 app.MapControllers();
