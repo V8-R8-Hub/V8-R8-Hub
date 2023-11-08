@@ -12,7 +12,10 @@ namespace DBUpgrader.Repositories {
 				new AddPublicFileTable(connectionFactory),
 				new AddGameTable(connectionFactory),
 				new AddWebGroupPermissions(connectionFactory),
-				new AddGameAssetsTable(connectionFactory)
+				new AddGameAssetsTable(connectionFactory),
+				new AddUserTable(connectionFactory),
+				new AddAuthKeyTable(connectionFactory),
+				new AddMetricTable(connectionFactory),
 			};
 		}
 

@@ -97,13 +97,13 @@ bootstrapCommand.SetHandler(
 			var command = new NpgsqlCommand("SELECT 1 FROM pg_roles WHERE rolname='hub_upgrader'", adminConnection);
 			var result = await command.ExecuteScalarAsync();
 			if (!(result ?? 0).Equals(1)) {
-				await adminConnection.ExecuteQuery($@"
-                    CREATE ROLE hub_upgrader WITH
-                        PASSWORD '{generatedPassword}'
-                        LOGIN
-                        CREATEDB
-                        CREATEROLE
-                ");
+				await adminConnection.ExecuteQuery($"""
+					CREATE ROLE hub_upgrader WITH
+						PASSWORD '{generatedPassword}'
+						LOGIN
+						CREATEDB
+						CREATEROLE
+				""");
 				await configRepository.SetConfig(new PersistentDataBaseConfig() {
 					DatabaseName = databaseName,
 					Password = generatedPassword,
@@ -118,9 +118,9 @@ bootstrapCommand.SetHandler(
 			result = await command.ExecuteScalarAsync();
 			if (!(result ?? 0).Equals(1)) {
 				await adminConnection.ExecuteQuery($@"
-                    CREATE DATABASE {commandBuilder.QuoteIdentifier(databaseName)} 
-                        OWNER hub_upgrader
-                ");
+					CREATE DATABASE {commandBuilder.QuoteIdentifier(databaseName)} 
+						OWNER hub_upgrader
+				");
 			}
 			await adminConnection.CloseAsync();
 		}
@@ -130,26 +130,26 @@ bootstrapCommand.SetHandler(
 		var upgraderConnection = await upgraderConnectionFactory.GetConnection();
 
 		await using (var transaction = await upgraderConnection.BeginTransactionAsync()) {
-			await upgraderConnection.ExecuteQuery(@"
-                CREATE TYPE upgrade_action_type AS ENUM ('Up', 'Down');
-            ");
+			await upgraderConnection.ExecuteQuery("""
+				CREATE TYPE upgrade_action_type AS ENUM ('Up', 'Down');
+			""");
 
-			await upgraderConnection.ExecuteQuery(@"
-                CREATE TABLE upgrade_log (
-		        	id SERIAL PRIMARY KEY,
-		        	upgrader_name text NOT NULL,
-		        	action_type upgrade_action_type NOT NULL,
-		        	success boolean NOT NULL,
-		        	message text
-		        );
-            ");
+			await upgraderConnection.ExecuteQuery("""
+				CREATE TABLE upgrade_log (
+					id SERIAL PRIMARY KEY,
+					upgrader_name text NOT NULL,
+					action_type upgrade_action_type NOT NULL,
+					success boolean NOT NULL,
+					message text
+				);
+			""");
 
-			await upgraderConnection.ExecuteQuery(@"
-                CREATE TABLE upgrade_tracker (
-		        	id SERIAL PRIMARY KEY,
-		        	upgrader_name text UNIQUE NOT NULL
-		        );
-            ");
+			await upgraderConnection.ExecuteQuery("""
+				CREATE TABLE upgrade_tracker (
+					id SERIAL PRIMARY KEY,
+					upgrader_name text UNIQUE NOT NULL
+				);
+			""");
 
 			await transaction.CommitAsync();
 		}

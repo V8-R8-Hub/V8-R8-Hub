@@ -11,18 +11,17 @@ namespace V8_R8_Hub.Services {
 		Task DeleteGameAsset(Guid gameId, string filePath);
 		Task<ISet<string>> GetAllowedGameAssetMimeTypes();
 		Task<FileData?> GetGameAsset(Guid gameGuid, string path);
-        Task<IEnumerable<GameAssetBrief>> GetGameAssets(Guid gameGuid);
-    }
+		Task<IEnumerable<GameAssetBrief>> GetGameAssets(Guid gameGuid);
+	}
 
 	public class GameAssetService : IGameAssetService {
 		private readonly IDbConnection _connection;
-		private readonly IPublicFileService _fileService;
-        private readonly ISafeFileService _safeFileService;
+		private readonly ISafeFileService _safeFileService;
 
-        public GameAssetService(IDbConnector connector, ISafeFileService safeFileService) {
-            _connection = connector.GetDbConnection();
-            _safeFileService = safeFileService;
-        }
+		public GameAssetService(IDbConnector connector, ISafeFileService safeFileService) {
+			_connection = connector.GetDbConnection();
+			_safeFileService = safeFileService;
+		}
 
 		public async Task<IEnumerable<GameAssetBrief>> AddGameAssets(Guid gameGuid, IEnumerable<VirtualFile> assetFiles) {
 			try {
@@ -37,7 +36,7 @@ namespace V8_R8_Hub.Services {
 				});
 
 				if (gameId == null) {
-					throw new UnknownGameException("Could not find game corresponding with the given guid");
+					throw new UnknownGameException(gameGuid, "Could not find game corresponding with the given guid");
 				}
 
 				var gameAssetBriefs = new List<GameAssetBrief>();
@@ -61,6 +60,8 @@ namespace V8_R8_Hub.Services {
 			} catch (PostgresException ex) {
 				if (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "game_assets_game_id_path_key")
 					throw new DuplicateAssetException("Asset with that name already exists");
+				if (ex.SqlState == PostgresErrorCodes.NotNullViolation && ex.ColumnName == "game_id")
+					throw new UnknownGameException(gameGuid, "Could not find game corresponding with the given guid");
 				throw ex;
 			}
 		}
@@ -80,7 +81,7 @@ namespace V8_R8_Hub.Services {
 			});
 
 			if (deleted.Count() != 1) {
-				throw new UnknownGameException("No game assets were deleted");
+				throw new UnknownGameException(gameId, "No game assets were deleted");
 			}
 			transaction.Commit();
 		}

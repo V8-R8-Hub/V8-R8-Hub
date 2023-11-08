@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using V8_R8_Hub.Middleware;
 using V8_R8_Hub.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +27,7 @@ Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 builder.Services.AddSession(options => {
 	options.IdleTimeout = TimeSpan.FromHours(1);
 	options.Cookie.HttpOnly = true;
-	options.Cookie.IsEssential = true;
+	options.Cookie.IsEssential = false;
 });
 
 builder.Services.AddTransient<IPublicFileService, PublicFileService>();
@@ -34,6 +35,7 @@ builder.Services.AddTransient<ISafeFileService, SafeFileService>();
 builder.Services.AddTransient<IGameAssetService, GameAssetService>();
 builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<IDbConnector, DbConnector>();
+builder.Services.AddTransient<IMetricService, MetricService>();
 
 var app = builder.Build();
 
@@ -55,6 +57,14 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.UseSession();
+
+app.UsePersistentAuth();
+
+app.UseWhen(ctx => {
+	return ctx.Request.Path.StartsWithSegments("/api/user", StringComparison.OrdinalIgnoreCase);
+	}, builder => {
+	builder.UseUserTracking();
+});
 
 app.MapRazorPages();
 app.MapControllers();
