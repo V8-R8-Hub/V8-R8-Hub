@@ -4,13 +4,21 @@
 <head>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="aframe-rounded-component.js"></script>
+    <script src="https://binzume.github.io/aframe-xylayout/dist/xylayout-all.min.js"></script>
 
+    <script type="module" src="/UtilityFunctions.js"></script>
+    <script defer type="module" src="menuComponent.js"></script>
+
+    <script defer type="module" src="GameHubScene.js"></script>
+    <script defer type="module" src="GameGrid.js "></script>
 </head>
 
 <body>
     <a-scene>
         <a-assets>
             <img id="ground" src="/cool-gray-61nfwad1bullevu4.jpg">
+            <img id="mooncity" src="/Matematik_i_mooncity.jpg">
+
         </a-assets>
 
         <a-entity id="cameraRig" position="0 1 2" rotation="0 0 0">
@@ -18,15 +26,9 @@
                 <a-cursor></a-cursor>
             </a-entity>
         </a-entity>
-
         <!-- walls  ground celling gang gang-->
-        <a-plane src="#ground" position="0 0 0" rotation="-90 0 0" width="30" height="30"></a-plane>
-        <a-box src="#ground" position="0 5 -15" depth="2" width="30" height="20"></a-box>
-        <a-box src="#ground" position="0 5 15" depth="2" width="30" height="20"></a-box>
-        <a-box src="#ground" position="-15 5 0" rotation="0 90 0" depth="2" width="30" height="20"></a-box>
-        <a-box src="#ground" position="15 5 0" rotation="0 90 0" depth="2" width="30" height="20"></a-box>
-        <a-box src="#ground" position="0 15 0" rotation="90 0 0" depth="2" width="30" height="30"></a-box>
-        <script src="menu.js"></script>
+        <a-GameScene> </a-GameScene>
+        <a-menu></a-menu>
     </a-scene>
 </body>
 

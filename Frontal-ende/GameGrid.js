@@ -1,38 +1,37 @@
-
+import { ClearMenu } from "./UtilityFunctions.js";
 AFRAME.registerComponent('gameGrid', {
     schema: {
         games: { type: "array", default: [] },
+        id: { type: "string", default: 'menu' }
     },
 
     init: function () {
+
         this.gamesPerPage = 9;
         this.gamesPerRow = 3;
         this.games_on_page = [];
         this.page_number = 0;
 
         this.number_of_pages = Math.ceil(this.data.games.length / this.gamesPerPage);
-
-        console.log(this.data.games);
+        this.Ascene = document.querySelector("a-scene");
 
         this.CreateGamePagesArray();
-
         this.CreateStuff();
 
     },
 
     CreateStuff: function () {
-        let hub = document.querySelector("#gamehub");
-        if (hub) {
-            hub.remove();
-        }
+
         let poscontainer = document.createElement("a-entity");
-        poscontainer.setAttribute("id", "gamehub");
+        poscontainer.setAttribute("id", this.data.id);
         poscontainer.setAttribute("position", "0 6 0");
         let container = this.CreateFullcontainer();
 
         poscontainer.appendChild(container);
         this.el.appendChild(poscontainer);
     },
+
+
 
 
     CreateFullcontainer: function () {
@@ -68,10 +67,22 @@ AFRAME.registerComponent('gameGrid', {
         button.addEventListener('mousedown', onclick);
         return button;
     },
+    GoToMenu: function () {
+        ClearMenu();
+        let menu = document.createElement("a-menu");
+
+        this.Ascene.appendChild(menu);
+    },
     CreateGameContainer: function () {
         let gameContainer = document.createElement("a-xycontainer");
         gameContainer.setAttribute("direction", "column");
+        let backButton = this.CreateButton("back", () => {
 
+            this.GoToMenu();
+
+        });
+
+        gameContainer.appendChild(backButton);
 
         return this.CreatePage(gameContainer);
 
@@ -117,8 +128,20 @@ AFRAME.registerComponent('gameGrid', {
         gameElement.setAttribute("src", `#${game}`);
         row.appendChild(gameElement);
 
-    }
+    },
+
 })
+
+//skyd mig :)
+// class Games {
+//     constructor(game_list) {
+//         let
+//     }
+// }
+
+// function GetGamesList() {
+
+// }
 
 
 

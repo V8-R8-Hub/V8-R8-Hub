@@ -83,11 +83,11 @@ function AddEvents() {
     document.querySelector('#Options').addEventListener('mousedown', function (evt) {
         ClearMenu();
         var arr = ['Options', 'Right', 'Left', 'Back'];
+        console.log("AMONGUS")
         AddMenuItemsToMenu(menu, arr, 1.7);
         var back = document.querySelector('#Back');
         var left = document.querySelector('#Left');
         var rightHand = document.querySelector('#rightHand')
-        var leftHand = document.querySelector('#leftHand')
         var right = document.querySelector('#Right');
         back.setAttribute('width', 2.5)
 
