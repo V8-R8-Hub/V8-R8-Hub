@@ -32,6 +32,7 @@ namespace V8_R8_Hub.Services {
 				} else if (ex.SqlState == PostgresErrorCodes.NotNullViolation) {
 					throw new UnknownGameException(gameGuid, "Game not found");
 				}
+				throw ex;
 			}
 		}
 	}

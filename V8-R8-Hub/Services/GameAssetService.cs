@@ -7,45 +7,61 @@ using V8_R8_Hub.Models.Internal;
 
 namespace V8_R8_Hub.Services {
 	public interface IGameAssetService {
-		Task<GameAssetBrief> AddGameAsset(Guid gameId, VirtualFile assetFile);
+		Task<IEnumerable<GameAssetBrief>> AddGameAssets(Guid gameId, IEnumerable<VirtualFile> assetFiles);
 		Task DeleteGameAsset(Guid gameId, string filePath);
+		Task<ISet<string>> GetAllowedGameAssetMimeTypes();
 		Task<FileData?> GetGameAsset(Guid gameGuid, string path);
-        Task<IEnumerable<GameAssetBrief>> GetGameAssets(Guid gameGuid);
-    }
+		Task<IEnumerable<GameAssetBrief>> GetGameAssets(Guid gameGuid);
+	}
 
 	public class GameAssetService : IGameAssetService {
 		private readonly IDbConnection _connection;
-		private readonly IPublicFileService _fileService;
-        private readonly ISafeFileService _safeFileService;
+		private readonly ISafeFileService _safeFileService;
 
-        public GameAssetService(IDbConnector connector, ISafeFileService safeFileService) {
-            _connection = connector.GetDbConnection();
-            _safeFileService = safeFileService;
-        }
+		public GameAssetService(IDbConnector connector, ISafeFileService safeFileService) {
+			_connection = connector.GetDbConnection();
+			_safeFileService = safeFileService;
+		}
 
-        public async Task<GameAssetBrief> AddGameAsset(Guid gameId, VirtualFile assetFile) {
+		public async Task<IEnumerable<GameAssetBrief>> AddGameAssets(Guid gameGuid, IEnumerable<VirtualFile> assetFiles) {
 			try {
 				_connection.Open();
 
 				using var transaction = _connection.BeginTransaction();
-				var assetFileId = await _safeFileService.CreateFileFrom(assetFile, await GetAllowedGameAssetMimeTypes());
 
-				var inserted = await _connection.QuerySingleAsync<GameAssetBrief>(@"
-				INSERT INTO game_assets (game_id, file_id, path)
-					VALUES ((SELECT id FROM games WHERE public_id = @GameId), @FileId, @Path)
-					RETURNING path;
-			", new {
-					GameId = gameId,
-					FileId = assetFileId.Id,
-					Path = assetFile.FileName
+				int? gameId = await _connection.QuerySingleOrDefaultAsync<int?>("""
+					SELECT id FROM games WHERE public_id = @GameGuid
+				""", new {
+					GameGuid = gameGuid
 				});
+
+				if (gameId == null) {
+					throw new UnknownGameException(gameGuid, "Could not find game corresponding with the given guid");
+				}
+
+				var gameAssetBriefs = new List<GameAssetBrief>();
+				
+				foreach (var assetFile in assetFiles) {
+					var assetFileId = await _safeFileService.CreateFileFrom(assetFile, await GetAllowedGameAssetMimeTypes());
+					gameAssetBriefs.Append(await _connection.QuerySingleAsync<GameAssetBrief>("""
+						INSERT INTO game_assets (game_id, file_id, path)
+							VALUES (@GameId, @FileId, @Path)
+							RETURNING path;
+					""", new {
+						GameId = gameId,
+						FileId = assetFileId.Id,
+						Path = assetFile.FileName
+					}));
+				}
+
 				transaction.Commit();
-				return inserted;
+
+				return gameAssetBriefs;
 			} catch (PostgresException ex) {
 				if (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "game_assets_game_id_path_key")
 					throw new DuplicateAssetException("Asset with that name already exists");
 				if (ex.SqlState == PostgresErrorCodes.NotNullViolation && ex.ColumnName == "game_id")
-					throw new UnknownGameException(gameId, "Could not find game corresponding with the given guid");
+					throw new UnknownGameException(gameGuid, "Could not find game corresponding with the given guid");
 				throw ex;
 			}
 		}
