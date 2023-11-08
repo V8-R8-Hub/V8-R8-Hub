@@ -45,7 +45,7 @@ namespace V8_R8_Hub.Services {
 				if (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "game_assets_game_id_path_key")
 					throw new DuplicateAssetException("Asset with that name already exists");
 				if (ex.SqlState == PostgresErrorCodes.NotNullViolation && ex.ColumnName == "game_id")
-					throw new UnknownGameException("Could not find game corresponding with the given guid");
+					throw new UnknownGameException(gameId, "Could not find game corresponding with the given guid");
 				throw ex;
 			}
 		}
@@ -65,7 +65,7 @@ namespace V8_R8_Hub.Services {
 			});
 
 			if (deleted.Count() != 1) {
-				throw new UnknownGameException("No game assets were deleted");
+				throw new UnknownGameException(gameId, "No game assets were deleted");
 			}
 			transaction.Commit();
 		}

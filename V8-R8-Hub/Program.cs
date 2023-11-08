@@ -35,6 +35,7 @@ builder.Services.AddTransient<ISafeFileService, SafeFileService>();
 builder.Services.AddTransient<IGameAssetService, GameAssetService>();
 builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<IDbConnector, DbConnector>();
+builder.Services.AddTransient<IMetricService, MetricService>();
 
 var app = builder.Build();
 
@@ -58,6 +59,12 @@ app.UseAuthorization();
 app.UseSession();
 
 app.UsePersistentAuth();
+
+app.UseWhen(ctx => {
+	return ctx.Request.Path.StartsWithSegments("/api/user", StringComparison.OrdinalIgnoreCase);
+	}, builder => {
+	builder.UseUserTracking();
+});
 
 app.MapRazorPages();
 app.MapControllers();

@@ -16,9 +16,10 @@ namespace DbUpgrader.Upgraders {
 		
 		protected override async Task UpInternal(NpgsqlConnection connection) {
 			await connection.ExecuteQuery("""
-				CREATE TABLE user_metrics (
+				CREATE TABLE game_metrics (
 					id SERIAL PRIMARY KEY,
 					metric JSON NOT NULL,
+					category TEXT NOT NULL,
 					created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 					user_id INTEGER NOT NULL REFERENCES users(id),
 					game_id INTEGER NOT NULL REFERENCES games(id)
@@ -26,11 +27,11 @@ namespace DbUpgrader.Upgraders {
 				GRANT
 					SELECT, INSERT, UPDATE, DELETE
 				ON 
-					user_metrics
+					game_metrics
 				TO v8_r8_hub_api_group;
 
 				GRANT USAGE ON SEQUENCE
-					user_metrics_id_seq
+					game_metrics_id_seq
 				TO v8_r8_hub_api_group;
 				""");
 		}
@@ -38,16 +39,16 @@ namespace DbUpgrader.Upgraders {
 		protected override async Task DownInternal(NpgsqlConnection connection) {
 			await connection.ExecuteQuery("""
 				REVOKE USAGE ON SEQUENCE 
-					user_metrics_id_seq
+					game_metrics_id_seq
 				FROM v8_r8_hub_api_group;
 			
 				REVOKE 
 					SELECT, INSERT, UPDATE, DELETE
 				ON
-					user_metrics
+					game_metrics
 				FROM v8_r8_hub_api_group;
 
-				DROP TABLE user_metrics;
+				DROP TABLE game_metrics;
 				""");
 		}
 	}
