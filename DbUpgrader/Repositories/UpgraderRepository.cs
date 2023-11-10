@@ -16,6 +16,7 @@ namespace DBUpgrader.Repositories {
 				new AddUserTable(connectionFactory),
 				new AddAuthKeyTable(connectionFactory),
 				new AddMetricTable(connectionFactory),
+				new AddUserGameSessionTable(connectionFactory),
 			};
 		}
 
