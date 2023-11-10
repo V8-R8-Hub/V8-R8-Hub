@@ -68,7 +68,7 @@ namespace V8_R8_Hub.Controllers {
 		/// </summary>
 		/// <response code="200">Success and the asset blob is the response</response>
 		/// <response code="404">Either the game guid or the asset path does not correspond with an asset</response>
-		[HttpGet("{guid:guid}/{path}", Name = "GetGameAsset")]
+		[HttpGet("{guid:guid}/assets/{path}", Name = "GetGameAsset")]
 		[ProducesResponseType(typeof(FileContentResult), 200)]
 		[ProducesResponseType(404)]
 		public async Task<IActionResult> GetGameAsset(Guid guid, string path) {
@@ -85,7 +85,7 @@ namespace V8_R8_Hub.Controllers {
 		/// <response code="200">Success</response>
 		/// <response code="400">One of the assets has an unsupported mime type or the name already exists</response>
 		/// <response code="404">A game with the given GUID does not exist</response>
-		[HttpPost("{guid:guid}", Name = "CreateGameAssets")]
+		[HttpPost("{guid:guid}/assets", Name = "CreateGameAssets")]
 		[ProducesResponseType(typeof(GameAssetBrief), 200)]
 		[ProducesResponseType(typeof(string), 400)]
 		[ProducesResponseType(404)]
@@ -112,7 +112,7 @@ namespace V8_R8_Hub.Controllers {
 		/// </summary>
 		/// <response code="200">Success</response>
 		/// <response code="404">Either the game guid or the asset path does not correspond with an asset</response>
-		[HttpDelete("{guid:guid}/{path}", Name = "DeleteGameAsset")]
+		[HttpDelete("{guid:guid}/assets/{path}", Name = "DeleteGameAsset")]
 		[ProducesResponseType(typeof(GameAssetBrief), 200)]
 		[ProducesResponseType(404)]
 		public async Task<IActionResult> DeleteGameAsset(Guid guid, string path		) {
@@ -121,6 +121,18 @@ namespace V8_R8_Hub.Controllers {
 				return Ok();
 			} catch (UnknownGameException ex) {
 				_logger.LogWarning("User tried to delete game asset for unknown game");
+				_logger.LogWarning("Details: {Message}", ex.Message);
+				return NotFound("The given guid does not correspond with any game");
+			}
+		}
+
+		[HttpPost("{guid:guid}/tags")]
+		public async Task<IActionResult> AddGameTag(Guid guid, [FromBody] string tag) {
+			try {
+				await _gameService.AddGameTag(guid, tag);
+				return Ok();
+			} catch (UnknownGameException ex) {
+				_logger.LogWarning("User tried to add tag to unknown game");
 				_logger.LogWarning("Details: {Message}", ex.Message);
 				return NotFound("The given guid does not correspond with any game");
 			}

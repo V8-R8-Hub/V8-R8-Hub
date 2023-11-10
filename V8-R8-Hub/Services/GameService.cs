@@ -1,16 +1,19 @@
 ﻿using Dapper;
+using Npgsql;
 using System.Data;
+using V8_R8_Hub.Models.Exceptions;
 using V8_R8_Hub.Models.Internal;
 using V8_R8_Hub.Models.Response;
 
 namespace V8_R8_Hub.Services {
 	public interface IGameService {
+		Task AddGameTag(Guid gameGuid, string tag);
 		Task<ObjectIdentifier> CreateGame(string name, string description, VirtualFile gameFile, VirtualFile thumbnailFile);
 		Task<ISet<string>> GetAllowedGameMimeTypes();
 		Task<ISet<string>> GetAllowedThumbnailMimeTypes();
-        Task<GameBrief> GetGame(Guid guid);
-        Task<int> GetGameId(Guid publicId);
-        Task<IEnumerable<GameBrief>> GetGames();
+		Task<GameBrief> GetGame(Guid guid);
+		Task<int> GetGameId(Guid publicId);
+		Task<IEnumerable<GameBrief>> GetGames();
 	}
 
 	public class GameService : IGameService {
@@ -76,11 +79,11 @@ namespace V8_R8_Hub.Services {
 					RETURNING 
 						id, public_id as guid;
 				""", new {
-					Name = name,
-					Description = description,
-					GameFileId = gameFileId.Id,
-					ThumbnailFileId = thumbnailFileId.Id
-				}
+				Name = name,
+				Description = description,
+				GameFileId = gameFileId.Id,
+				ThumbnailFileId = thumbnailFileId.Id
+			}
 			);
 			transaction.Commit();
 			return gameId;
@@ -99,6 +102,45 @@ namespace V8_R8_Hub.Services {
 				"image/gif",
 				"image/tiff"
 			});
+		}
+
+		public async Task AddGameTag(Guid gameGuid, string tag) {
+			var gameId = await _connection.QuerySingleOrDefaultAsync<int?>("SELECT game_id FROM games WHERE public_id=@GameGuid", new {
+				GameGuid = gameGuid
+			});
+
+			if (gameId == null) {
+				throw new UnknownGameException(gameGuid, "Unknown game");
+			}
+
+			try {
+				await _connection.ExecuteAsync("""
+				INSERT INTO game_tags (game_id, tag_id)
+					VALUES (@GameId, (SELECT id FROM tags WHERE name = @Tag))
+				""", new {
+					GameId = gameId,
+					Tag = tag
+				});
+			} catch (PostgresException ex) {
+				if (ex.SqlState == PostgresErrorCodes.NotNullViolation && ex.ColumnName == "tag_id") {
+					var tagId = await _connection.QuerySingleAsync<int>("""
+						INSERT INTO tags (name)
+							VALUES (@Tag)
+						RETURNING id
+						""", new {
+						Tag = tag
+					});
+
+					await _connection.ExecuteAsync("""
+						INSERT INTO game_tags (game_id, tag_id)
+							VALUES (@GameId, @TagId)
+						""", new {
+						GameId = gameId,
+						TagId = tagId
+					});
+				}
+				throw ex;
+			}
 		}
 
 	}
