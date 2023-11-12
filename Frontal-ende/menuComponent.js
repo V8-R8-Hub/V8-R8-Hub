@@ -1,4 +1,4 @@
-import { ClearMenu } from "./UtilityFunctions.js";
+import { ClearMenu  } from "./UtilityFunctions.js";
 
 
 AFRAME.registerComponent('menu', {
@@ -83,15 +83,15 @@ AFRAME.registerComponent('menu', {
     },
     AddEvents: function () {
         document.querySelector('#Games').addEventListener('mousedown', (evt) => {
-            console.log("sus");
             ClearMenu();
             this.SetGameHub();
         });
         document.querySelector('#Options').addEventListener('mousedown', (evt) => {
+            this.ClearMenu();
+
             console.log(this)
-            ClearMenu();
             let arr = ['Options', 'Right', 'Left', 'Back'];
-            this.AddMenuItemsToMenu(menu, arr, 1.7);
+            this.AddMenuItemsToMenu(this.menu, arr, 1.7);
             let back = document.querySelector('#Back');
             let left = document.querySelector('#Left');
             let rightHand = document.querySelector('#rightHand')
@@ -130,7 +130,7 @@ AFRAME.registerComponent('menu', {
             });
 
             back.addEventListener('mousedown', (evt) => {
-                ClearMenu();
+                this.ClearMenu();
                 this.AddMenuItemsToMenu(this.menu, this.menuItemArr, 2.5);
                 this.AddEvents();
             });

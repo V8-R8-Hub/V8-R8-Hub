@@ -1,20 +1,35 @@
 
 
-class Games {
+
+class GamesLoader {
     constructor() {
-        this.Games = [];
+        this.Games = {};
 
     }
-    LoadGames() {
-        let gamesList = GetGamesList();
-
+    async LoadGames() {
+        await this.FetchGamesList();
 
     }
-    async GetGamesList() {
-        let Gamelist = await fetch("https://localhost:8080");
+
+    getGames() {
+        return Object.values(this.Games);
+    }
+    async FetchGamesList() {
+        let response = await fetch("https://localhost:7171/api/Game",{
+            headers: {
+                'Access-Control-Allow-Origin': 'Origin'
+            }
+        });
+
+        let Gamelist =  await response.json();
         for (const game of Gamelist) {
-            this.Games.push(new Game(game));
+            this.Games[game.guid] = new Game(game);
         }
+        
+    }
+
+    getGame(guid) {
+        return this.Games[guid];
     }
 }
 
@@ -22,10 +37,42 @@ class Games {
 class Game {
     constructor(game) {
         this.name = game.name;
-        this.Guid = game.Guid;
-        this.thumbnail = game.thumbnail;
+        this.guid = game.guid;
+        this.ThumbNailUrl = "https://localhost:7171" + game.thumbnailUrl; 
         this.description = game.description;
-        this.gameBlobUrl = game.gameBlobUrl;
+        this.htmlUrl = game.gameBlobUrl;
+    }
+
+
+    GetDescription() {
+        return this.description;
+    }
+    async GetHtmlFile() {
+        let htmlFile = await fetch(this.htmlUrl);   
+        return htmlFile;
+
 
     }
+
 }
+
+
+
+
+
+const Games = new GamesLoader();
+
+
+export function GetGamesLoader () {
+    return Games;
+
+}
+
+
+
+export async function SetUpGameLoader () {
+    await Games.FetchGamesList();
+
+
+}
+
