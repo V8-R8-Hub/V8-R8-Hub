@@ -31,7 +31,6 @@ function CreateImgAsset(id, src) {
     img.setAttribute("src", src);
     wallAsset.appendChild(img);
     scene.appendChild(wallAsset);
-
 }
 
 function CreateSceneWall(el, pos, rot, width, height, src) {

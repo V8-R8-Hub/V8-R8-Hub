@@ -41,7 +41,6 @@ function switchScene(htmlFilename, jsFilename)
 
         files.forEach((file)=> {
             fetch(file.attributes.src.value).then(r => r.text()).then(eval)
-
         });
 
         setTimeout(() =>

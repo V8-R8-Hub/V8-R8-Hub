@@ -71,20 +71,6 @@ RegisterAFRAMEComponent('menu', {
         text.setAttribute('color', color);
     },
 
-    createRightHand: function () {
-        let rightHand = document.createElement('a-entity');
-        rightHand.setAttribute('id', 'rightHand');
-        rightHand.setAttribute('mixin', 'hand');
-        rightHand.setAttribute('oculus-touch-controls', { hand: 'right' });
-    },
-
-    createLeftHand: function () {
-        var leftHand = document.createElement('a-entity');
-        leftHand.setAttribute('id', 'leftHand');
-        leftHand.setAttribute('mixin', 'hand');
-        leftHand.setAttribute('oculus-touch-controls', { hand: 'left' });
-    },
-
     SetGameHub: function () {
         let game_grid = document.createElement('a-GameGrid');
         game_grid.setAttribute("games", "mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity");
@@ -145,8 +131,6 @@ RegisterAFRAMEComponent('menu', {
                 this.AddMenuItemsToMenu(this.menu, this.menuItemArr, 2.5);
                 this.AddEvents();
             });
-
-
         });
     },
 
