@@ -26,8 +26,6 @@ RegisterAFRAMEComponent('menu', {
         this.menu.setAttribute('height', 4);
         this.menuItemArr = ['Menu', 'Games', 'Options', 'Quit'];
         this.AddMenuItemsToMenu(this.menu, this.menuItemArr, 2.5);
-        this.createRightHand()
-        this.createLeftHand()
         this.AddEvents()
     },
 
