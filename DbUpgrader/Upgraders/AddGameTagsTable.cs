@@ -23,6 +23,7 @@ namespace DbUpgrader.Upgraders {
 				CREATE TABLE game_tags (
 					game_id INTEGER NOT NULL REFERENCES games(id),
 					tag_id INTEGER NOT NULL REFERENCES tags(id),
+					PRIMARY KEY(game_id, tag_id)
 				);
 
 				GRANT
@@ -32,7 +33,7 @@ namespace DbUpgrader.Upgraders {
 				TO v8_r8_hub_api_group;
 				
 				GRANT USAGE ON SEQUENCE
-					tags_id_seq, game_tags_id_seq
+					tags_id_seq
 				TO v8_r8_hub_api_group;
 				""");
 		}
@@ -40,7 +41,7 @@ namespace DbUpgrader.Upgraders {
 		protected override async Task DownInternal(NpgsqlConnection connection) {
 			await connection.ExecuteQuery("""
 				REVOKE USAGE ON SEQUENCE 
-					tags_id_seq, game_tags_id_seq
+					tags_id_seq
 				FROM v8_r8_hub_api_group;
 			
 				REVOKE 
@@ -49,8 +50,8 @@ namespace DbUpgrader.Upgraders {
 					tags, game_tags
 				FROM v8_r8_hub_api_group;
 
-				DROP TABLE tags;
 				DROP TABLE game_tags;
+				DROP TABLE tags;
 				""");
 		}
 	}

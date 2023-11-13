@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Npgsql;
 using System.Data;
+using System.Text.RegularExpressions;
 using V8_R8_Hub.Models.Exceptions;
 using V8_R8_Hub.Models.Internal;
 using V8_R8_Hub.Models.Response;
@@ -14,6 +15,7 @@ namespace V8_R8_Hub.Services {
 		Task<GameBrief> GetGame(Guid guid);
 		Task<int> GetGameId(Guid publicId);
 		Task<IEnumerable<GameBrief>> GetGames();
+		Task RemoveTag(Guid gameGuid, string tag);
 	}
 
 	public class GameService : IGameService {
@@ -32,7 +34,8 @@ namespace V8_R8_Hub.Services {
 					g.name,
 					g.description,
 					tf.public_id AS thumbnail_guid,
-					gf.public_id AS game_blob_guid
+					gf.public_id AS game_blob_guid,
+					(SELECT string_agg(t.name, ',') FROM game_tags gt LEFT JOIN tags t ON t.id = gt.tag_id WHERE gt.game_id = g.id) AS comma_seperated_tags
 				FROM games g
 				INNER JOIN public_files tf ON g.thumbnail_file_id = tf.id
 				INNER JOIN public_files gf ON g.game_file_id = gf.id
@@ -46,8 +49,9 @@ namespace V8_R8_Hub.Services {
 					g.name,
 					g.description,
 					tf.public_id AS thumbnail_guid,
-					gf.public_id AS game_blob_guid
-					FROM games g
+					gf.public_id AS game_blob_guid,
+					(SELECT string_agg(t.name, ',') FROM game_tags gt LEFT JOIN tags t ON t.id = gt.tag_id WHERE gt.game_id = g.id) AS comma_seperated_tags
+				FROM games g
 					INNER JOIN public_files tf ON g.thumbnail_file_id = tf.id
 					INNER JOIN public_files gf ON g.game_file_id = gf.id
 				WHERE
@@ -105,7 +109,15 @@ namespace V8_R8_Hub.Services {
 		}
 
 		public async Task AddGameTag(Guid gameGuid, string tag) {
-			var gameId = await _connection.QuerySingleOrDefaultAsync<int?>("SELECT game_id FROM games WHERE public_id=@GameGuid", new {
+			var sanitizedTag = SanitizeTag(tag);
+			if (!IsTagAllowed(sanitizedTag)) {
+				throw new IllegalTagException(sanitizedTag, "Tag contains illegal characters");
+			}
+			
+			_connection.Open();
+			using var transaction = _connection.BeginTransaction();
+			
+			var gameId = await _connection.QuerySingleOrDefaultAsync<int?>("SELECT id FROM games WHERE public_id=@GameGuid", new {
 				GameGuid = gameGuid
 			});
 
@@ -113,35 +125,55 @@ namespace V8_R8_Hub.Services {
 				throw new UnknownGameException(gameGuid, "Unknown game");
 			}
 
+			var tagId = await _connection.QuerySingleOrDefaultAsync<int?>("SELECT id FROM tags WHERE name=@Tag", new {
+				Tag = sanitizedTag
+			});
+			
+			if (tagId == null) {
+				tagId = await _connection.QuerySingleAsync<int>("""
+					INSERT INTO tags (name)
+						VALUES (@Tag)
+					RETURNING id
+					""", new {
+					Tag = tag
+				});
+			}
 			try {
 				await _connection.ExecuteAsync("""
 				INSERT INTO game_tags (game_id, tag_id)
-					VALUES (@GameId, (SELECT id FROM tags WHERE name = @Tag))
+					VALUES (@GameId, @TagId)
 				""", new {
 					GameId = gameId,
-					Tag = tag
+					TagId = tagId
 				});
-			} catch (PostgresException ex) {
-				if (ex.SqlState == PostgresErrorCodes.NotNullViolation && ex.ColumnName == "tag_id") {
-					var tagId = await _connection.QuerySingleAsync<int>("""
-						INSERT INTO tags (name)
-							VALUES (@Tag)
-						RETURNING id
-						""", new {
-						Tag = tag
-					});
-
-					await _connection.ExecuteAsync("""
-						INSERT INTO game_tags (game_id, tag_id)
-							VALUES (@GameId, @TagId)
-						""", new {
-						GameId = gameId,
-						TagId = tagId
-					});
-				}
-				throw ex;
+			} catch (PostgresException ex)
+				when (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "game_tags_pkey")
+			{
+				throw new DuplicateTagException(sanitizedTag, "The given game already has the given tag");
 			}
+
+			transaction.Commit();
 		}
 
+		public async Task RemoveTag(Guid gameGuid, string tag) {
+			var sanitizedTag = SanitizeTag(tag);
+
+			await _connection.QuerySingleOrDefaultAsync<int?>("""
+					DELETE FROM game_tags 
+						WHERE game_id = (SELECT id FROM games WHERE public_id = @GameGuid)
+						AND tag_id = (SELECT id FROM tags WHERE name = @Tag)
+				""", new {
+				GameGuid = gameGuid,
+				Tag = sanitizedTag
+			});
+		}
+
+		private bool IsTagAllowed(string tag) {
+			return (new Regex("^([A-Za-z ])+$")).IsMatch(tag);
+		}
+
+		private string SanitizeTag(string tag) {
+			return tag.Trim().ToLower();
+		}
 	}
 }

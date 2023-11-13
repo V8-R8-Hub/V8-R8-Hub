@@ -59,7 +59,8 @@ namespace V8_R8_Hub.Controllers {
 				Name = gameBrief.Name,
 				Description = gameBrief.Description,
 				ThumbnailUrl = Url.Action("GetFile", "PublicFile", new { fileGuid = gameBrief.ThumbnailGuid }),
-				GameBlobUrl = Url.Action("GetFile", "PublicFile", new { fileGuid = gameBrief.GameBlobGuid })
+				GameBlobUrl = Url.Action("GetFile", "PublicFile", new { fileGuid = gameBrief.GameBlobGuid }),
+				Tags = gameBrief.CommaSeperatedTags.Split(",").ToList()
 			}));
 		}
 
@@ -126,16 +127,46 @@ namespace V8_R8_Hub.Controllers {
 			}
 		}
 
+		/// <summary>
+		/// Adds a tag to a game
+		/// </summary>
+		/// <returns status="200">The tag was added successfully</returns>
+		/// <returns status="404">The specified game does not exist</returns>
+		/// <returns status="400">The tag contains illegal characters</returns>
+		/// <returns status="409">The tag has already been added to the game</returns>
 		[HttpPost("{guid:guid}/tags")]
+		[ProducesResponseType(200)]
+		[ProducesResponseType(typeof(string), 404)]
+		[ProducesResponseType(typeof(string), 400)]
+		[ProducesResponseType(typeof(string), 409)]
 		public async Task<IActionResult> AddGameTag(Guid guid, [FromBody] string tag) {
 			try {
 				await _gameService.AddGameTag(guid, tag);
-				return Ok();
 			} catch (UnknownGameException ex) {
 				_logger.LogWarning("User tried to add tag to unknown game");
 				_logger.LogWarning("Details: {Message}", ex.Message);
 				return NotFound("The given guid does not correspond with any game");
+			} catch (IllegalTagException ex) {
+				_logger.LogWarning("User tried to add tag which is not valid " + ex.GivenTag);
+				_logger.LogWarning("Details: {Message}", ex.Message);
+				return BadRequest("The given tag is not valid");
+			} catch (DuplicateTagException ex) {
+				_logger.LogWarning("User tried to add a duplicate tag " + ex.GivenTag);
+				_logger.LogWarning("Details: {Message}", ex.Message);
+				return Conflict("The given tag is already on the game");
 			}
+			return Ok();
 		}
+
+		/// <summary>
+		/// Removes a tag from a specific game
+		/// </summary>
+		/// <returns status="200">The tag was either removed or did not exist in the first place</returns>
+		[HttpDelete("{guid:guid}/tags/{tag}")]
+		[ProducesResponseType(200)]
+		public async Task<IActionResult> RemoveTag(Guid guid, string tag) {
+			await _gameService.RemoveTag(guid, tag);
+			return Ok();
+		} 
 	}
 }
