@@ -1,0 +1,17 @@
+﻿@page
+@model V8_R8_Hub.Pages.Admin.GameListModel
+@{
+}
+
+<html>
+<head>
+    <title>Hello world!</title>
+</head>
+<body>
+    <ul>
+    @foreach (var gameBrief in Model.GameBriefs) {
+        <li><a href="/Admin/Game/@gameBrief.Guid">link</a> @gameBrief.Name - @gameBrief.Description</li>
+    }
+    </ul>
+</body>
+</html>

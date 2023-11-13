@@ -1,0 +1,67 @@
+﻿@page "{guid:guid}"
+@model V8_R8_Hub.Pages.Admin.GameModel
+@{
+}
+
+<html>
+<head>
+	<title>Hello world!</title>
+</head>
+<body>
+	<div>
+		<p>Name: @Model.GameBrief.Name</p>
+		<p>Desription: @Model.GameBrief.Description</p>
+		<img src="@Url.Action("GetFile", "PublicFile", new {fileGuid = @Model.GameBrief.ThumbnailGuid})" />
+		<form method="POST" action="@Url.Action("CreateGameAssets", "Game", new {guid = Model.GameBrief.Guid})" enctype="multipart/form-data" id="add-link-form">
+			<input type="file" name="assetFiles" accept="@Model.AllowedAssetMimeTypesString" multiple>
+			<input type="submit" value="Add asset">
+		</form>
+		<p id="error-container"></p>
+		<ul>
+			@foreach (var asset in Model.GameAssets) {
+				<li>
+					<a href="@Url.Action("GetGameAsset", "Game", new {guid = Model.GameBrief.Guid, path = asset.Path})">@asset.Path</a>
+					-
+					<form method="DELETE" action="@Url.Action("DeleteGameAsset", "Game", new {guid = asset.Path, path = asset.Path})" class="asset-delete-form" style="display: inline-block;">
+						<input type="submit" value="x">
+					</form>
+				</li>
+			}
+		</ul>
+
+		<script type="text/javascript">
+			let addLinkForm = document.getElementById("add-link-form");
+			let errorContainer = document.getElementById("error-container");
+			addLinkForm.addEventListener("submit", async (ev) => {
+				ev.preventDefault();
+				let formData = new FormData(addLinkForm);
+				let response = await fetch(addLinkForm.action, {
+					method: addLinkForm.method,
+					body: formData
+				})
+				if (response.status == 200) {
+					location.reload();
+					return;
+				}
+				errorContainer.innerText = response.status + " - " + await response.text();
+			});
+			let assetDeleteForms = document.getElementsByClassName("asset-delete-form");
+			for (let form of assetDeleteForms) {
+				form.addEventListener("submit", async (ev) => {
+					ev.preventDefault();
+					let formData = new FormData(form);
+					let response = await fetch(form.action, {
+						method: "DELETE",
+						body: formData
+					})
+					if (response.status == 200) {
+						location.reload();
+						return;
+					}
+					errorContainer.innerText = response.status + " - " + await response.text();
+				});
+			}
+		</script>
+	</div>
+</body>
+</html>

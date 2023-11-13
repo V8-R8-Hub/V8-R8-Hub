@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DbUpgrader": {
+      "commandName": "Project",
+      "commandLineArgs": "upgrade InitUpgrader --allow-down"
+    }
+  }
+}

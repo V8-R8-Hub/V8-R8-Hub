@@ -1,0 +1,26 @@
+﻿@page
+@model V8_R8_Hub.Pages.Admin.CreateGameModel
+@{
+}
+<html>
+<head>
+    <title>Hello world!</title>
+</head>
+<body>
+    <form method="POST" action="@Url.Action("CreateGame", "Game")" enctype="multipart/form-data">
+        <label for="Name">Game name:</label>
+        <input name="Name"/>
+        <br />
+        <label for="Name">Description:</label>
+        <input name="Description" />
+        <br />
+        <label for="Name">Game file:</label>
+        <input type="file" name="GameFile" accept="@Model.AllowedGameMimeTypesString">
+        <br />
+        <label for="Name">Thumbnail file:</label>
+        <input type="file" name="ThumbnailFile" accept="@Model.AllowedThumbnailMimeTypesString">
+        <br/>
+        <input type="submit" />
+    </form>
+</body>
+</html>
