@@ -1,13 +1,10 @@
-
-
-
 RegisterAFRAMEComponent('game',{
     schema: {
         guid : {type : "string", default: ""}
 
     },
+    
     init : function() {
-
         this.game = GetGamesLoader().getGame(this.data.guid);
         
         console.log("HAHAH");
@@ -19,8 +16,8 @@ RegisterAFRAMEComponent('game',{
         this.gameElement.setAttribute("src", `#${this.game.ThumbNailUrl}`);
         this.ShowDescriptionOnClick();
         this.el.appendChild(this.gameElement);
-
     },
+
     ShowDescriptionOnClick: function() {
         AddGameEventListener(this.gameElement,"mousedown",() => {
             let descriptionElement = this.CreateDescriptionElement();
@@ -30,46 +27,37 @@ RegisterAFRAMEComponent('game',{
         });
    
     },
+
     CreateDescriptionElement : function () {
         let descriptionElement = document.createElement("a-Description");
         descriptionElement.setAttribute("guid",this.game.guid);
 
         return descriptionElement;
-    } 
-    
-
-
-
-
-
+    }
 });
-
-
 
 RegisterAFRAMEPrimitive('a-game', {
     defaultComponents: {
         game: {}
     },
+
     mappings: {
         guid: "game.guid",
     },
- 
-
-
 })
-
-
 
 RegisterAFRAMEComponent('description', {
     schema: {
         guid : {type : "string", default: ""}
 
     },
+
     init : function() {
         this.game = GetGamesLoader().getGame(this.data.guid);
         
         this.RenderDescriptionElemment();
     },
+
     RenderDescriptionElemment: function () {
         let descriptionElement = document.createElement("a-rounded");
         this.descriptionElement = descriptionElement;
@@ -85,10 +73,8 @@ RegisterAFRAMEComponent('description', {
 
         this.descriptionElement.appendChild(textElement)
         document.querySelector("#menu").appendChild(this.descriptionElement);
+    },
 
-
-
-    } ,
     CreateDescriptionTextElement() {
         let textElement = document.createElement("a-rounded");
         textElement.setAttribute("color","grey");
@@ -108,7 +94,6 @@ RegisterAFRAMEComponent('description', {
         text.setAttribute('color', color);
 
         return text;
-
     },
 
     CreatePlayButton: function() {
@@ -120,15 +105,13 @@ RegisterAFRAMEComponent('description', {
 
         PlayButton.addEventListener('mousedown',()=> {
             switchScene("maler.html","");
-
         });
+
         PlayButton.setAttribute("position", { x: 0.05, y: 0.4, z: 0.01 });
         let buttonText = this.CreateText(`play ${this.game.name}`,"black");
         PlayButton.appendChild(buttonText);
 
         return PlayButton;
-
-
     },
 
     CreateExitButton : function () {
@@ -141,16 +124,16 @@ RegisterAFRAMEComponent('description', {
         let exitText =  this.CreateText("X","black");
         console.log("SUS");
 
-        exitButton.addEventListener("mousedown",()=> {
-
+        exitButton.addEventListener("mousedown", ()=> {
             this.descriptionElement.remove();
             ActivateGameEventlisteners();
         });
+
         exitButton.appendChild(exitText);
         return exitButton;
     },
-    CreateDescriptionThumbnail: function() {
 
+    CreateDescriptionThumbnail: function() {
         let gameElement = document.createElement("a-image");
        
         gameElement.setAttribute("width", "3");
@@ -162,8 +145,6 @@ RegisterAFRAMEComponent('description', {
     },
 })
 
-
-
 RegisterAFRAMEPrimitive('a-description', {
     defaultComponents: {
         description: {}
@@ -171,7 +152,4 @@ RegisterAFRAMEPrimitive('a-description', {
     mappings: {
         guid: "description.guid",
     },
- 
 })
-
-

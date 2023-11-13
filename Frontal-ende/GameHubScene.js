@@ -1,14 +1,10 @@
 function setupScene() {
     let scene = document.querySelector("a-gamescene");
-
     scene.remove();
+
     let template = document.querySelector("#overallTemplate");
-
-
     template.appendChild(document.createElement("a-gamescene"));
-
 }
-
 
 RegisterAFRAMEComponent('gamescene', {
     init: function () {
@@ -24,14 +20,8 @@ RegisterAFRAMEComponent('gamescene', {
 
         CreateSceneWall(this.el, { x: 0, y: 15, z: 0 }, { x: 90, y: 0, z: 0 }, "30", "30", "#ground");
         CreateSceneFloor(this.el, "30", "30", "#ground")
-
     }
-
 })
-
-
-
-
 
 function CreateImgAsset(id, src) {
     let scene = document.querySelector("a-scene");
@@ -65,10 +55,7 @@ function CreateSceneFloor(el, width, height, src) {
     plane.setAttribute("height", height);
     plane.setAttribute("rotation", "-90 0 0");
     el.appendChild(plane);
-
-
 }
-
 
 RegisterAFRAMEPrimitive('a-gamescene', {
     defaultComponents: {

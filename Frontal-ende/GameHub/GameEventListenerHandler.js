@@ -1,8 +1,5 @@
-
-
 //For at qoute en vis mand "Globale variabler er roden til alt ondt i verdenen" 
 let Clickable = true;
-
 
 function AddGameEventListener(element, eventName, onClick) {
     console.log("AMONGUS")
@@ -15,15 +12,12 @@ function AddGameEventListener(element, eventName, onClick) {
     })
 }
 
-
- function ActivateGameEventlisteners() {
+function ActivateGameEventlisteners()
+{
     Clickable = true;
-
 }
 
-
-
- function DeactivateGameEventlisteners() {
+function DeactivateGameEventlisteners()
+{
     Clickable = false;
-
 }

@@ -1,6 +1,3 @@
-
-
-
 function SetUpMenu() {
     let menu = document.querySelector("a-menu");
     let scene = document.querySelector("a-gamescene");
@@ -12,15 +9,13 @@ function SetUpMenu() {
     template.appendChild(document.createElement("a-menu"));
 
     template.appendChild(document.createElement("a-gamescene"));
-
-
 }
-
 
 RegisterAFRAMEComponent('menu', {
     schema: {
         id: { type: "string", default: "menu" }
     },
+
     init: function () {
         this.menu = document.createElement('a-rounded');
         this.el.appendChild(this.menu);
@@ -35,7 +30,6 @@ RegisterAFRAMEComponent('menu', {
         this.createLeftHand()
         this.AddEvents()
     },
-
 
     AddMenuItemsToMenu: function (menu, itemarr, supMenuItemWidth) {
         let y = 3;
@@ -58,6 +52,7 @@ RegisterAFRAMEComponent('menu', {
             menuitem.setAttribute('id', itemarr[i]);
         }
     },
+
     AddText: function (item, string, color) {
         let text = document.createElement('a-text')
         item.appendChild(text)
@@ -66,6 +61,7 @@ RegisterAFRAMEComponent('menu', {
         text.setAttribute("value", string);
         text.setAttribute('color', color);
     },
+
     AddText: function (item, string, color) {
         let text = document.createElement('a-text')
         item.appendChild(text)
@@ -81,23 +77,26 @@ RegisterAFRAMEComponent('menu', {
         rightHand.setAttribute('mixin', 'hand');
         rightHand.setAttribute('oculus-touch-controls', { hand: 'right' });
     },
+
     createLeftHand: function () {
         var leftHand = document.createElement('a-entity');
         leftHand.setAttribute('id', 'leftHand');
         leftHand.setAttribute('mixin', 'hand');
         leftHand.setAttribute('oculus-touch-controls', { hand: 'left' });
     },
-    SetGameHub: function () {
 
+    SetGameHub: function () {
         let game_grid = document.createElement('a-GameGrid');
         game_grid.setAttribute("games", "mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity");
         this.el.appendChild(game_grid);
     },
+
     AddEvents: function () {
         document.querySelector('#Games').addEventListener('mousedown', (evt) => {
             ClearMenu();
             this.SetGameHub();
         });
+
         document.querySelector('#Options').addEventListener('mousedown', (evt) => {
             this.ClearMenu();
 
@@ -150,18 +149,13 @@ RegisterAFRAMEComponent('menu', {
 
         });
     },
+
     ClearMenu: function () {
         while (this.menu.firstChild) {
             this.menu.removeChild(this.menu.lastChild);
         }
     },
-
-
 })
-
-
-
-
 
 RegisterAFRAMEPrimitive('a-menu', {
     defaultComponents: {
@@ -171,6 +165,5 @@ RegisterAFRAMEPrimitive('a-menu', {
         id: "menu.id",
     }
 })
-
 
 SetUpMenu();

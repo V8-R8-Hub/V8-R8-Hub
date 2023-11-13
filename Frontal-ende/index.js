@@ -1,6 +1,6 @@
-
 let registeredComponents = [];
 let registeredPrimitives = {};
+
 function createButtons()
 {
     // tilføj hele lortet til scenen
@@ -26,14 +26,9 @@ function switchScene(htmlFilename, jsFilename)
     document.getElementById('loadingScreen').setAttribute('visible', 'true');
 
     // slet alle registered components
-
-    
-
     registeredComponents.forEach((x) => delete AFRAME.components[x]);
 
-
     console.log("AMOGUS AMOGUS");
-
 
     // skift HTML ud
     document.getElementById('overallTemplate').setAttribute('template', 'src: ' + htmlFilename);
@@ -44,12 +39,10 @@ function switchScene(htmlFilename, jsFilename)
         let files =  document.getElementById('overallTemplate').querySelectorAll("script");
         console.log(files);
 
-
         files.forEach((file)=> {
             fetch(file.attributes.src.value).then(r => r.text()).then(eval)
 
         });
-        
 
         setTimeout(() =>
         {
@@ -66,17 +59,12 @@ function RegisterAFRAMEComponent(componentName, componentFunction)
     registeredComponents.push(componentName);
 }
 
-
-
 function RegisterAFRAMEPrimitive(primitiveName, PrimitiveObj)
 {
-
-
     if (primitiveName in registeredPrimitives) {
-
-
         return;
     }
+    
     AFRAME.registerPrimitive(primitiveName, PrimitiveObj);
     registeredPrimitives[primitiveName] = true;
 }
