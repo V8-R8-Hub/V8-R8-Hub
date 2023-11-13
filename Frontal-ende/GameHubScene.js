@@ -1,7 +1,16 @@
+function setupScene() {
+    let scene = document.querySelector("a-gamescene");
+
+    scene.remove();
+    let template = document.querySelector("#overallTemplate");
 
 
+    template.appendChild(document.createElement("a-gamescene"));
 
-AFRAME.registerComponent('GameScene', {
+}
+
+
+RegisterAFRAMEComponent('gamescene', {
     init: function () {
         console.log("SUS");
         CreateImgAsset("ground", "/cool-gray-61nfwad1bullevu4.jpg");
@@ -61,9 +70,11 @@ function CreateSceneFloor(el, width, height, src) {
 }
 
 
-AFRAME.registerPrimitive('a-GameScene', {
+RegisterAFRAMEPrimitive('a-gamescene', {
     defaultComponents: {
-        GameScene: {
+        gamescene: {
         }
     },
 })
+
+setupScene();

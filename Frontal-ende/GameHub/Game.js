@@ -1,9 +1,7 @@
-import { GetGamesLoader } from "../GameLoader.js";
 
 
 
-
-AFRAME.registerComponent('game',{
+RegisterAFRAMEComponent('game',{
     schema: {
         guid : {type : "string", default: ""}
 
@@ -15,20 +13,22 @@ AFRAME.registerComponent('game',{
         console.log("HAHAH");
 
         this.gameElement = document.createElement("a-image");
-       
+        this.gameElement.setAttribute('class','Game');
         this.gameElement.setAttribute("width", "3");
         this.gameElement.setAttribute("height", "3");
         this.gameElement.setAttribute("src", `#${this.game.ThumbNailUrl}`);
-
-        this.el.appendChild(gameElement);
+        this.ShowDescriptionOnClick();
+        this.el.appendChild(this.gameElement);
 
     },
     ShowDescriptionOnClick: function() {
-        this.gameElement.addEventListener("mousedown",() => {
+        AddGameEventListener(this.gameElement,"mousedown",() => {
             let descriptionElement = this.CreateDescriptionElement();
-            this.el.sceneEl.appendChild(descriptionElement); 
-        });
 
+            this.el.appendChild(descriptionElement); 
+            DeactivateGameEventlisteners();
+        });
+   
     },
     CreateDescriptionElement : function () {
         let descriptionElement = document.createElement("a-Description");
@@ -45,7 +45,8 @@ AFRAME.registerComponent('game',{
 });
 
 
-AFRAME.registerPrimitive('a-Description', {
+
+RegisterAFRAMEPrimitive('a-game', {
     defaultComponents: {
         game: {}
     },
@@ -59,7 +60,7 @@ AFRAME.registerPrimitive('a-Description', {
 
 
 
-AFRAME.registerComponent('description', {
+RegisterAFRAMEComponent('description', {
     schema: {
         guid : {type : "string", default: ""}
 
@@ -67,29 +68,33 @@ AFRAME.registerComponent('description', {
     init : function() {
         this.game = GetGamesLoader().getGame(this.data.guid);
         
+        this.RenderDescriptionElemment();
     },
     RenderDescriptionElemment: function () {
-        let descriptionElement = document.createElement("a-arounded");
-        descriptionElement.setAttribute('height', 5);
+        let descriptionElement = document.createElement("a-rounded");
+        this.descriptionElement = descriptionElement;
+        this.descriptionElement.setAttribute('height', 5);
         descriptionElement.setAttribute('width', 5);
-
+        descriptionElement.setAttribute('position', {x : -2.5, y : 2.5, z : 1    })
 
         let playButton = this.CreatePlayButton();
         let textElement = this.CreateDescriptionTextElement();
+        let exitButton = this.CreateExitButton();
+        this.descriptionElement.appendChild(playButton)
+        this.descriptionElement.appendChild(exitButton)
 
-        descriptionElement.appendChild(playButton)
-
-        descriptionElement.appendChild(textElement)
-
+        this.descriptionElement.appendChild(textElement)
+        document.querySelector("#menu").appendChild(this.descriptionElement);
 
 
 
     } ,
     CreateDescriptionTextElement() {
-        let textElement = document.createElement("a-arounded");
+        let textElement = document.createElement("a-rounded");
         textElement.setAttribute("color","grey");
-        textElement.setAttribute('height', 0.5);
-        textElement.setAttribute('width', 0.5);
+        textElement.setAttribute('height', 3);
+        textElement.setAttribute('width', 4);
+        textElement.setAttribute('position',{x : 0, y : 2,  z : 0.05})
         let text = this.CreateText(this.game.description,"black");
         textElement.appendChild(text);
         return textElement;
@@ -108,11 +113,17 @@ AFRAME.registerComponent('description', {
 
     CreatePlayButton: function() {
         let PlayButton = document.createElement('a-rounded');
-        button.addEventListener('mousedown',()=> {
-            //luscus stuff??
+        PlayButton.setAttribute('position',{x : 0, y : 0,  z : 0.05})
+        PlayButton.setAttribute('height', 1);
+        PlayButton.setAttribute('width', 5);
+        PlayButton.setAttribute("color","grey");
+
+        PlayButton.addEventListener('mousedown',()=> {
+            switchScene("maler.html","");
+
         });
-        button.setAttribute("position", { x: 0.05, y: 0.4, z: 0.01 });
-        let buttonText = this.CreateText(`play ${this.game.name}`,"white");
+        PlayButton.setAttribute("position", { x: 0.05, y: 0.4, z: 0.01 });
+        let buttonText = this.CreateText(`play ${this.game.name}`,"black");
         PlayButton.appendChild(buttonText);
 
         return PlayButton;
@@ -122,7 +133,19 @@ AFRAME.registerComponent('description', {
 
     CreateExitButton : function () {
         let exitButton = document.createElement('a-entity');
+
+        exitButton.setAttribute('height', 2);
+        exitButton.setAttribute('width', 2);
+
+        exitButton.setAttribute('position',{x: 4.5, y : 4.5, z : 0.05})
         let exitText =  this.CreateText("X","black");
+        console.log("SUS");
+
+        exitButton.addEventListener("mousedown",()=> {
+
+            this.descriptionElement.remove();
+            ActivateGameEventlisteners();
+        });
         exitButton.appendChild(exitText);
         return exitButton;
     },
@@ -141,7 +164,7 @@ AFRAME.registerComponent('description', {
 
 
 
-AFRAME.registerPrimitive('a-Description', {
+RegisterAFRAMEPrimitive('a-description', {
     defaultComponents: {
         description: {}
     },
@@ -150,3 +173,5 @@ AFRAME.registerPrimitive('a-Description', {
     },
  
 })
+
+

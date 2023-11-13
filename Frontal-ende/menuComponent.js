@@ -1,23 +1,37 @@
-import { ClearMenu  } from "./UtilityFunctions.js";
 
 
-AFRAME.registerComponent('menu', {
+
+function SetUpMenu() {
+    let menu = document.querySelector("a-menu");
+    let scene = document.querySelector("a-gamescene");
+
+    menu.remove();
+    scene.remove();
+    let template = document.querySelector("#overallTemplate");
+
+    template.appendChild(document.createElement("a-menu"));
+
+    template.appendChild(document.createElement("a-gamescene"));
+
+
+}
+
+
+RegisterAFRAMEComponent('menu', {
     schema: {
         id: { type: "string", default: "menu" }
     },
     init: function () {
         this.menu = document.createElement('a-rounded');
-        this.Ascene = document.querySelector('a-scene');
-        this.Ascene.appendChild(this.menu);
+        this.el.appendChild(this.menu);
+
         this.menu.setAttribute('id', this.data.id);
         this.menu.setAttribute("position", { x: -1.5, y: 0.5, z: -3 });
         this.menu.setAttribute('width', 3);
         this.menu.setAttribute('height', 4);
         this.menuItemArr = ['Menu', 'Games', 'Options', 'Quit'];
-
         this.AddMenuItemsToMenu(this.menu, this.menuItemArr, 2.5);
         this.createRightHand()
-        document.querySelector('#rightHand').setAttribute('laser-controls', '')
         this.createLeftHand()
         this.AddEvents()
     },
@@ -66,20 +80,18 @@ AFRAME.registerComponent('menu', {
         rightHand.setAttribute('id', 'rightHand');
         rightHand.setAttribute('mixin', 'hand');
         rightHand.setAttribute('oculus-touch-controls', { hand: 'right' });
-        cameraRig.appendChild(rightHand);
     },
     createLeftHand: function () {
         var leftHand = document.createElement('a-entity');
         leftHand.setAttribute('id', 'leftHand');
         leftHand.setAttribute('mixin', 'hand');
         leftHand.setAttribute('oculus-touch-controls', { hand: 'left' });
-        cameraRig.appendChild(leftHand);
     },
     SetGameHub: function () {
 
         let game_grid = document.createElement('a-GameGrid');
         game_grid.setAttribute("games", "mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity,mooncity");
-        this.Ascene.appendChild(game_grid);
+        this.el.appendChild(game_grid);
     },
     AddEvents: function () {
         document.querySelector('#Games').addEventListener('mousedown', (evt) => {
@@ -151,7 +163,7 @@ AFRAME.registerComponent('menu', {
 
 
 
-AFRAME.registerPrimitive('a-menu', {
+RegisterAFRAMEPrimitive('a-menu', {
     defaultComponents: {
         menu: {}
     },
@@ -159,3 +171,6 @@ AFRAME.registerPrimitive('a-menu', {
         id: "menu.id",
     }
 })
+
+
+SetUpMenu();

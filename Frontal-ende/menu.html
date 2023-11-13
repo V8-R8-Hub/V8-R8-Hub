@@ -1,8 +1,11 @@
-<!DOCTYPE html>
-<html>
 
-<head>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    
+            <a-assets>
+                <img id="ground" src="/cool-gray-61nfwad1bullevu4.jpg">
+                <img id="mooncity" src="/Matematik_i_mooncity.jpg">
+    
+            </a-assets>
     <script src="aframe-rounded-component.js"></script>
     <script src="https://binzume.github.io/aframe-xylayout/dist/xylayout-all.min.js"></script>
 
@@ -16,25 +19,11 @@
     <script defer type="module" src="/GameHub/Game.js"></script>
 
 
-</head>
 
-<body>
-    <a-scene>
-        <a-assets>
-            <img id="ground" src="/cool-gray-61nfwad1bullevu4.jpg">
-            <img id="mooncity" src="/Matematik_i_mooncity.jpg">
-
-        </a-assets>
-
-        <a-entity id="cameraRig" position="0 1 2" rotation="0 0 0">
-            <a-entity id="camera" camera look-controls wasd-controls="acceleration:100">
-                <a-cursor></a-cursor>
-            </a-entity>
-        </a-entity>
+    
         <!-- walls  ground celling gang gang-->
         <a-GameScene> </a-GameScene>
-        <a-menu></a-menu>
-    </a-scene>
-</body>
 
-</html>
+
+
+    <a-menu></a-menu>

@@ -63,14 +63,14 @@ class Game {
 const Games = new GamesLoader();
 
 
-export function GetGamesLoader () {
+ function GetGamesLoader () {
     return Games;
 
 }
 
 
 
-export async function SetUpGameLoader () {
+ async function SetUpGameLoader () {
     await Games.FetchGamesList();
 
 

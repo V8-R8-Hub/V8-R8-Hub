@@ -1,13 +1,13 @@
-import { ClearMenu } from "../UtilityFunctions.js";
-import { GetGamesLoader, SetUpGameLoader } from "../GameLoader.js";
 
-AFRAME.registerComponent('gameGrid', {
+
+RegisterAFRAMEComponent('gamegrid', {
     schema: {
         games: { type: "array", default: [{x : 2, y: 4}] },
         id: { type: "string", default: 'menu' }
     },
 
     init: function () {
+        console.log("HUH?");
         let getGames = async () =>  {
             await SetUpGameLoader();
             this.games = GetGamesLoader();   
@@ -17,7 +17,6 @@ AFRAME.registerComponent('gameGrid', {
             this.games_on_page = [];
             this.page_number = 0;
             this.number_of_pages = Math.ceil(this.data.games.length / this.gamesPerPage);
-            this.Ascene = document.querySelector("a-scene");
 
             this.menu = document.createElement('a-menu');
             this.CreateAssets();
@@ -57,7 +56,7 @@ AFRAME.registerComponent('gameGrid', {
         poscontainer.setAttribute("id", this.data.id);
         poscontainer.setAttribute("position",{x: -4, y: 2, z:0});
         let container = this.CreateFullcontainer();
-
+        
         poscontainer.appendChild(container);
         this.el.appendChild(poscontainer);
     },
@@ -159,7 +158,7 @@ AFRAME.registerComponent('gameGrid', {
 
         let gameElement = document.createElement("a-game");
         gameElement.setAttribute("position",{x : x_coordinates, y : 0, z : 0})
-
+        console.log("HUHU")
         gameElement.setAttribute("guid",game.guid);
 
        
@@ -171,10 +170,9 @@ AFRAME.registerComponent('gameGrid', {
 
 
 
-
-AFRAME.registerPrimitive('a-GameGrid', {
+RegisterAFRAMEPrimitive('a-gamegrid', {
     defaultComponents: {
-        gameGrid: {}
+        gamegrid: {}
     },
     mappings: {
         games: "gameGrid.games",
