@@ -11,6 +11,7 @@
 	<div>
 		<p>Name: @Model.GameBrief.Name</p>
 		<p>Desription: @Model.GameBrief.Description</p>
+		<p>Tags: @Model.GameBrief.CommaSeperatedTags</p>
 		<img src="@Url.Action("GetFile", "PublicFile", new {fileGuid = @Model.GameBrief.ThumbnailGuid})" />
 		<form method="POST" action="@Url.Action("CreateGameAssets", "Game", new {guid = Model.GameBrief.Guid})" enctype="multipart/form-data" id="add-link-form">
 			<input type="file" name="assetFiles" accept="@Model.AllowedAssetMimeTypesString" multiple>

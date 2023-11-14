@@ -5,5 +5,6 @@
 		public required string Description { get; set; }
 		public required string ThumbnailUrl { get; set; }
 		public required string GameBlobUrl { get; set; }
+		public required List<string> Tags { get; set; }
 	}
 }

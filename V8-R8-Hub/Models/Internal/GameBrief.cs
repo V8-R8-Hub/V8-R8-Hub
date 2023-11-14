@@ -5,5 +5,6 @@
 		public required string Description { get; set; }
 		public required Guid ThumbnailGuid { get; set; }
 		public required Guid GameBlobGuid { get; set; }
+		public required string CommaSeperatedTags { get; set; }
 	}
 }
