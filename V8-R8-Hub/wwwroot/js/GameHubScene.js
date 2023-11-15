@@ -1,3 +1,5 @@
+
+
 function setupScene() {
     let scene = document.querySelector("a-gamescene");
     scene.remove();
@@ -22,6 +24,7 @@ RegisterAFRAMEComponent('gamescene', {
         CreateSceneFloor(this.el, "30", "30", "#ground")
     }
 })
+
 
 function CreateImgAsset(id, src) {
     let scene = document.querySelector("a-scene");

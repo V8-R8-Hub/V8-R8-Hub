@@ -22,7 +22,10 @@ namespace V8_R8_Hub.Pages.Admin {
 		public async Task OnGetAsync(Guid guid) {
 			Guid = guid;
 			await Task.WhenAll(
-				Task.Run(async () => GameBrief = await _gameService.GetGame(guid)),
+				Task.Run(async () => {
+					GameBrief = await _gameService.GetGame(guid);
+					System.Console.WriteLine(GameBrief == null);
+					}),
 				Task.Run(async () => GameAssets = (await _gameAssetService.GetGameAssets(guid)).ToList()),
 				Task.Run(async () => AllowedAssetMimeTypesString = string.Join(", ", await _gameAssetService.GetAllowedGameAssetMimeTypes()))
 			);

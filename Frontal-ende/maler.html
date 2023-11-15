@@ -1,18 +1,18 @@
 <script src="./maler.js"></script>
 
-<a-assets>
-  <img id="sky" src="backdropOLD.png">
-  <img id="brick" src="brick.jpg">
-  <img id="plus", src="plus.png">
-  <img id="minus", src="minus.png">
-  <img id="minus5", src="minus5.png">
-  <img id="ok", src="ok.png">
-  <audio id="ambience" src="ambient.wav" preload="auto"></audio>
-  <audio id="maler370" src="maler.dir_370.wav", preload="auto"></audio>
-</a-assets>
+<img id="sky" src="./backdropOLD.png">
+<img id="brick" src="./brick.jpg">
+<img id="plus" , src="plus.png">
+<img id="minus" , src="minus.png">
+<img id="minus5" , src="minus5.png">
+<img id="ok" , src="ok.png">
+<audio id="ambience" src="ambient.wav" preload="auto"></audio>
+<audio id="maler370" src="maler.dir_370.wav" , preload="auto"></audio>
 <a-cube color="#0095DD" rotation="20 40 0" position="0 1 0">
-  <a-animation attribute="rotation" from="20 0 0" to="20 360 0" direction="alternate" dur="4000" repeat="indefinite" easing="ease"></a-animation>
+  <a-animation attribute="rotation" from="20 0 0" to="20 360 0" direction="alternate" dur="4000" repeat="indefinite"
+    easing="ease"></a-animation>
 </a-cube>
-<a-entity geometry="primitive: torus; radius: 1; radiusTubular: 0.1; segmentsTubular: 12;" material="color: #EAEFF2; roughness: 0.1; metalness: 0.5;" rotation="10 0 0" position="-3 1 0">
-<a-entity id="ambient" sound="src: #ambience"></a-entity>
-<a-entity id="maler_370" sound="src: #maler370"></a-entity>
+<a-entity geometry="primitive: torus; radius: 1; radiusTubular: 0.1; segmentsTubular: 12;"
+  material="color: #EAEFF2; roughness: 0.1; metalness: 0.5;" rotation="10 0 0" position="-3 1 0">
+  <a-entity id="ambient" sound="src: #ambience"></a-entity>
+  <a-entity id="maler_370" sound="src: #maler370"></a-entity>

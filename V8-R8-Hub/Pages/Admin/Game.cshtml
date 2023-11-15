@@ -21,8 +21,8 @@
 			@foreach (var asset in Model.GameAssets) {
 				<li>
 					<a href="@Url.Action("GetGameAsset", "Game", new {guid = Model.GameBrief.Guid, path = asset.Path})">@asset.Path</a>
-					-
-					<form method="DELETE" action="@Url.Action("DeleteGameAsset", "Game", new {guid = asset.Path, path = asset.Path})" class="asset-delete-form" style="display: inline-block;">
+			
+					<form method="DELETE" action="@Url.Action("DeleteGameAsset", "Game", new {guid = Model.GameBrief.Guid, path = asset.Path})" class="asset-delete-form" style="display: inline-block;">
 						<input type="submit" value="x">
 					</form>
 				</li>

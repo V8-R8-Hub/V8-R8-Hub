@@ -1,16 +1,16 @@
-RegisterAFRAMEComponent('game',{
+RegisterAFRAMEComponent('game', {
     schema: {
-        guid : {type : "string", default: ""}
+        guid: { type: "string", default: "" }
 
     },
-    
-    init : function() {
+
+    init: function () {
         this.game = GetGamesLoader().getGame(this.data.guid);
-        
+
         console.log("HAHAH");
 
         this.gameElement = document.createElement("a-image");
-        this.gameElement.setAttribute('class','Game');
+        this.gameElement.setAttribute('class', 'Game');
         this.gameElement.setAttribute("width", "3");
         this.gameElement.setAttribute("height", "3");
         this.gameElement.setAttribute("src", `#${this.game.guid}-thumb`);
@@ -18,19 +18,19 @@ RegisterAFRAMEComponent('game',{
         this.el.appendChild(this.gameElement);
     },
 
-    ShowDescriptionOnClick: function() {
-        AddGameEventListener(this.gameElement,"mousedown",() => {
+    ShowDescriptionOnClick: function () {
+        AddGameEventListener(this.gameElement, "mousedown", () => {
             let descriptionElement = this.CreateDescriptionElement();
 
-            this.el.appendChild(descriptionElement); 
+            this.el.appendChild(descriptionElement);
             DeactivateGameEventlisteners();
         });
-   
+
     },
-        
-    CreateDescriptionElement : function () {
+
+    CreateDescriptionElement: function () {
         let descriptionElement = document.createElement("a-Description");
-        descriptionElement.setAttribute("guid",this.game.guid);
+        descriptionElement.setAttribute("guid", this.game.guid);
 
         return descriptionElement;
     }
@@ -48,13 +48,13 @@ RegisterAFRAMEPrimitive('a-game', {
 
 RegisterAFRAMEComponent('description', {
     schema: {
-        guid : {type : "string", default: ""}
+        guid: { type: "string", default: "" }
 
     },
 
-    init : function() {
+    init: function () {
         this.game = GetGamesLoader().getGame(this.data.guid);
-        
+
         this.RenderDescriptionElemment();
     },
 
@@ -63,7 +63,7 @@ RegisterAFRAMEComponent('description', {
         this.descriptionElement = descriptionElement;
         this.descriptionElement.setAttribute('height', 5);
         descriptionElement.setAttribute('width', 5);
-        descriptionElement.setAttribute('position', {x : -2.5, y : 2.5, z : 1    })
+        descriptionElement.setAttribute('position', { x: -2.5, y: 2.5, z: 1 })
 
         let playButton = this.CreatePlayButton();
         let textElement = this.CreateDescriptionTextElement();
@@ -77,11 +77,11 @@ RegisterAFRAMEComponent('description', {
 
     CreateDescriptionTextElement() {
         let textElement = document.createElement("a-rounded");
-        textElement.setAttribute("color","grey");
+        textElement.setAttribute("color", "grey");
         textElement.setAttribute('height', 3);
         textElement.setAttribute('width', 4);
-        textElement.setAttribute('position',{x : 0, y : 2,  z : 0.05})
-        let text = this.CreateText(this.game.description,"black");
+        textElement.setAttribute('position', { x: 0, y: 2, z: 0.05 })
+        let text = this.CreateText(this.game.description, "black");
         textElement.appendChild(text);
         return textElement;
     },
@@ -96,35 +96,35 @@ RegisterAFRAMEComponent('description', {
         return text;
     },
 
-    CreatePlayButton: function() {
+    CreatePlayButton: function () {
         let PlayButton = document.createElement('a-rounded');
-        PlayButton.setAttribute('position',{x : 0, y : 0,  z : 0.05})
+        PlayButton.setAttribute('position', { x: 0, y: 0, z: 0.05 })
         PlayButton.setAttribute('height', 1);
         PlayButton.setAttribute('width', 5);
-        PlayButton.setAttribute("color","grey");
+        PlayButton.setAttribute("color", "grey");
 
-        PlayButton.addEventListener('mousedown',()=> {
-            switchScene("maler.html","");
+        PlayButton.addEventListener('mousedown', () => {
+            switchScene(this.game.htmlUrl, this.game.guid, "");
         });
 
         PlayButton.setAttribute("position", { x: 0.05, y: 0.4, z: 0.01 });
-        let buttonText = this.CreateText(`play ${this.game.name}`,"black");
+        let buttonText = this.CreateText(`play ${this.game.name}`, "black");
         PlayButton.appendChild(buttonText);
 
         return PlayButton;
     },
 
-    CreateExitButton : function () {
+    CreateExitButton: function () {
         let exitButton = document.createElement('a-entity');
 
         exitButton.setAttribute('height', 2);
         exitButton.setAttribute('width', 2);
 
-        exitButton.setAttribute('position',{x: 4.5, y : 4.5, z : 0.05})
-        let exitText =  this.CreateText("X","black");
+        exitButton.setAttribute('position', { x: 4.5, y: 4.5, z: 0.05 })
+        let exitText = this.CreateText("X", "black");
         console.log("SUS");
 
-        exitButton.addEventListener("mousedown", ()=> {
+        exitButton.addEventListener("mousedown", () => {
             this.descriptionElement.remove();
             ActivateGameEventlisteners();
         });
@@ -133,9 +133,9 @@ RegisterAFRAMEComponent('description', {
         return exitButton;
     },
 
-    CreateDescriptionThumbnail: function() {
+    CreateDescriptionThumbnail: function () {
         let gameElement = document.createElement("a-image");
-       
+
         gameElement.setAttribute("width", "3");
         gameElement.setAttribute("height", "3");
         gameElement.setAttribute("src", `#${this.game.guid}-thumb`);

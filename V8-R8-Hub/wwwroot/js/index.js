@@ -1,50 +1,64 @@
+
+
 let registeredComponents = [];
 let registeredPrimitives = {};
+let gameGuid = "";
 
-function createButtons()
-{
+
+function SetGameGuid(guid) {
+    gameGuid = guid;
+}
+
+
+function createButtons() {
     // tilføj hele lortet til scenen
     var rightHand = document.createElement('a-entity');
     rightHand.setAttribute('id', 'rightHand');
     rightHand.setAttribute('mixin', 'hand');
-    rightHand.setAttribute('oculus-touch-controls', {hand: 'right'});
+    rightHand.setAttribute('oculus-touch-controls', { hand: 'right' });
     rightHand.setAttribute('laser-controls', '');
 
     var leftHand = document.createElement('a-entity');
     leftHand.setAttribute('id', 'leftHand');
     leftHand.setAttribute('mixin', 'hand');
-    leftHand.setAttribute('oculus-touch-controls', {hand: 'left'});
+    leftHand.setAttribute('oculus-touch-controls', { hand: 'left' });
 
     var cameraRig = document.getElementById('cameraRig');
     cameraRig.appendChild(rightHand);
     cameraRig.appendChild(leftHand);
 }
 
-function switchScene(htmlFilename, jsFilename)
-{
+async function switchScene(htmlFilename, guid, jsFilename) {
+
+
+    SetGameGuid(guid);
+    await SetUpGameLoader();
+
+    let game = GetGamesLoader().getGame(guid);
+    console.log(game);
     // enable loading screen
     document.getElementById('loadingScreen').setAttribute('visible', 'true');
 
     // slet alle registered components
     registeredComponents.forEach((x) => delete AFRAME.components[x]);
+    if (game !== undefined) {
+        window.history.pushState("", game.name, "/api/Game/" + game.guid + "/play");
 
-    console.log("AMOGUS AMOGUS");
+    }
 
     // skift HTML ud
     document.getElementById('overallTemplate').setAttribute('template', 'src: ' + htmlFilename);
-    setTimeout(() =>
-    {
+    setTimeout(() => {
         // eksekvere JS
         console.log(jsFilename);
-        let files =  document.getElementById('overallTemplate').querySelectorAll("script");
+        let files = document.getElementById('overallTemplate').querySelectorAll("script");
         console.log(files);
 
-        files.forEach((file)=> {
+        files.forEach((file) => {
             fetch(file.attributes.src.value).then(r => r.text()).then(eval)
         });
 
-        setTimeout(() =>
-        {
+        setTimeout(() => {
             // disable loading screen
             document.getElementById('loadingScreen').emit('hide');
             document.getElementById('loadingScreen').setAttribute('visible', 'false');
@@ -52,18 +66,16 @@ function switchScene(htmlFilename, jsFilename)
     }, "5000");
 }
 
-function RegisterAFRAMEComponent(componentName, componentFunction)
-{
+function RegisterAFRAMEComponent(componentName, componentFunction) {
     AFRAME.registerComponent(componentName, componentFunction);
     registeredComponents.push(componentName);
 }
 
-function RegisterAFRAMEPrimitive(primitiveName, PrimitiveObj)
-{
+function RegisterAFRAMEPrimitive(primitiveName, PrimitiveObj) {
     if (primitiveName in registeredPrimitives) {
         return;
     }
-    
+
     AFRAME.registerPrimitive(primitiveName, PrimitiveObj);
     registeredPrimitives[primitiveName] = true;
 }

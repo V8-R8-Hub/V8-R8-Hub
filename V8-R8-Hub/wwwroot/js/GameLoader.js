@@ -1,5 +1,6 @@
-class GameRepository
-{
+
+
+class GameRepository {
     #games = {};
 
     constructor(gameList) {
@@ -32,11 +33,11 @@ class GameRepository
 
 class Game {
     constructor(game) {
-        console.log(game);
         this.name = game.name;
         this.guid = game.guid;
-        this.ThumbNailUrl = game.thumbnailUrl; 
+        this.ThumbNailUrl = game.thumbnailUrl;
         this.description = game.description;
+
         this.htmlUrl = game.gameBlobUrl;
     }
 
@@ -45,7 +46,7 @@ class Game {
     }
 
     async GetHtmlFile() {
-        let htmlFile = await fetch(this.htmlUrl);   
+        let htmlFile = await fetch(this.htmlUrl);
         return htmlFile;
     }
 }

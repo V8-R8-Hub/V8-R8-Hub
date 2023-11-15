@@ -1,15 +1,15 @@
 RegisterAFRAMEComponent('gamegrid', {
     schema: {
-        games: { type: "array", default: [{x : 2, y: 4}] },
+        games: { type: "array", default: [{ x: 2, y: 4 }] },
         id: { type: "string", default: 'menu' }
     },
 
     init: function () {
         console.log("HUH?");
-        let getGames = async () =>  {
+        let getGames = async () => {
             await SetUpGameLoader();
-            this.games = GetGamesLoader();   
-
+            this.games = GetGamesLoader();
+            console.log(this.games);
             this.gamesPerPage = 9;
             this.gamesPerRow = 3;
             this.games_on_page = [];
@@ -25,7 +25,7 @@ RegisterAFRAMEComponent('gamegrid', {
         getGames();
     },
 
-    CreateAssets: function() {
+    CreateAssets: function () {
         let imageAssets = document.createElement("a-assets");
         let gameList = this.games.getGames();
         for (const game of gameList) {
@@ -41,9 +41,9 @@ RegisterAFRAMEComponent('gamegrid', {
     CreateStuff: function () {
         let poscontainer = document.createElement("a-entity");
         poscontainer.setAttribute("id", this.data.id);
-        poscontainer.setAttribute("position",{x: -4, y: 2, z:0});
+        poscontainer.setAttribute("position", { x: -4, y: 2, z: 0 });
         let container = this.CreateFullcontainer();
-        
+
         poscontainer.appendChild(container);
         this.el.appendChild(poscontainer);
     },
@@ -58,7 +58,7 @@ RegisterAFRAMEComponent('gamegrid', {
             }
         });
 
-        leftButton.setAttribute("position",{x: -3 , y : 4, z :0});
+        leftButton.setAttribute("position", { x: -3, y: 4, z: 0 });
         let gameContainer = this.CreateGameContainer();
 
         let rightButton = this.CreateButton("right", () => {
@@ -68,7 +68,7 @@ RegisterAFRAMEComponent('gamegrid', {
             }
         });
 
-        rightButton.setAttribute("position",{x: 11 , y : 4, z :0});
+        rightButton.setAttribute("position", { x: 11, y: 4, z: 0 });
 
         container.appendChild(leftButton);
         container.appendChild(gameContainer);
@@ -98,7 +98,7 @@ RegisterAFRAMEComponent('gamegrid', {
         let backButton = this.CreateButton("back", () => {
             this.GoToMenu();
         });
-        backButton.setAttribute("position", {x: 4, y : 10  ,z :0})
+        backButton.setAttribute("position", { x: 4, y: 10, z: 0 })
 
         gameContainer.appendChild(backButton);
 
@@ -107,8 +107,7 @@ RegisterAFRAMEComponent('gamegrid', {
 
     CreateGamePagesArray: function () {
         let game_list = this.games.getGames();
-        for (let i = 0; i < this.number_of_pages; i++)
-        {
+        for (let i = 0; i < this.number_of_pages; i++) {
             let start_idx = i * this.gamesPerPage;
 
             let games = game_list.slice(start_idx, start_idx + this.gamesPerPage);
@@ -119,19 +118,17 @@ RegisterAFRAMEComponent('gamegrid', {
     CreatePage: function (gameContainer) {
         let games_on_page = this.games_on_page[this.page_number];
 
-        for (let i = 0; i < games_on_page.length; i += this.gamesPerRow)
-        {
+        for (let i = 0; i < games_on_page.length; i += this.gamesPerRow) {
             let games_on_row = games_on_page.slice(i, i + this.gamesPerRow);
-            let y_coordinates = (i * 4 )/this.gamesPerRow;
+            let y_coordinates = (i * 4) / this.gamesPerRow;
             let row_element = document.createElement("a-entity");
             console.log(y_coordinates);
-            row_element.setAttribute("position", {x : 0, y : y_coordinates, z : 0})
+            row_element.setAttribute("position", { x: 0, y: y_coordinates, z: 0 })
 
-            for (const [idx,game] of games_on_row.entries())
-            {
-                let x_coordinates = idx*4;
+            for (const [idx, game] of games_on_row.entries()) {
+                let x_coordinates = idx * 4;
 
-                this.RenderGameElement(row_element, game,x_coordinates);
+                this.RenderGameElement(row_element, game, x_coordinates);
             }
 
             gameContainer.appendChild(row_element);
@@ -140,11 +137,11 @@ RegisterAFRAMEComponent('gamegrid', {
         return gameContainer;
     },
 
-    RenderGameElement: function (row, game,x_coordinates) {
+    RenderGameElement: function (row, game, x_coordinates) {
         let gameElement = document.createElement("a-game");
-        gameElement.setAttribute("position",{x : x_coordinates, y : 0, z : 0})
+        gameElement.setAttribute("position", { x: x_coordinates, y: 0, z: 0 })
         console.log("HUHU")
-        gameElement.setAttribute("guid",game.guid);
+        gameElement.setAttribute("guid", game.guid);
 
         row.appendChild(gameElement);
     },

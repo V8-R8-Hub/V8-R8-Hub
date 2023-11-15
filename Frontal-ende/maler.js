@@ -2,8 +2,7 @@ console.log("test");
 
 document.getElementById('cameraRig').setAttribute('position', '0 0 7');
 
-function setupScene(scene)
-{
+function setupScene(scene) {
     var cylinder = document.createElement('a-cylinder');
     cylinder.setAttribute('color', '#FF9500');
     cylinder.setAttribute('height', '2');
@@ -12,7 +11,7 @@ function setupScene(scene)
     cylinder.setAttribute('rotation', '90 90 90');
     cylinder.setAttribute('src', 'https://media.tenor.com/mysjAvtx6ugAAAAM/joe-biden-wake-up.gif');
     //scene.appendChild(cylinder);
-    
+
     /*var wall = document.createElement('a-box');
     wall.setAttribute('width', '5.7');
     wall.setAttribute('height', '4.65');
@@ -20,7 +19,7 @@ function setupScene(scene)
     wall.setAttribute('position', '0 0.8 0');
     wall.setAttribute('src', '#brick');*/
     //scene.appendChild(wall);
-    
+
     var wallLeft = document.createElement('a-box');
     wallLeft.setAttribute('width', '3');
     wallLeft.setAttribute('height', '3');
@@ -28,7 +27,7 @@ function setupScene(scene)
     wallLeft.setAttribute('rotation', '0 125 0');
     wallLeft.setAttribute('src', '#brick');
     scene.appendChild(wallLeft);
-    
+
     var wallRight = document.createElement('a-box');
     wallRight.setAttribute('width', '3');
     wallRight.setAttribute('height', '3');
@@ -36,7 +35,7 @@ function setupScene(scene)
     wallRight.setAttribute('rotation', '0 45 0');
     wallRight.setAttribute('src', '#brick');
     scene.appendChild(wallRight);
-    
+
     var floor = document.createElement('a-plane');
     floor.setAttribute('src', 'brick.jpg');
     floor.setAttribute('width', '50');
@@ -59,16 +58,16 @@ function setupScene(scene)
     troldmand.setAttribute('transparent', 'true');
 
     RegisterAFRAMEComponent('slides', {
-        init: function() {
+        init: function () {
             let loader = new THREE.TextureLoader();
             this.array = [];
-            this.array.push(loader.load("troldmand/maler.dir_212.png"));
-            this.array.push(loader.load("troldmand/maler.dir_213.png"));
-            this.array.push(loader.load("troldmand/maler.dir_214.png"));
-            this.array.push(loader.load("troldmand/maler.dir_215.png"));
-            this.array.push(loader.load("troldmand/maler.dir_216.png"));
-            this.array.push(loader.load("troldmand/maler.dir_217.png"));
-            this.array.push(loader.load("troldmand/maler.dir_218.png"));
+            this.array.push(loader.load("maler.dir_212.png"));
+            this.array.push(loader.load("maler.dir_213.png"));
+            this.array.push(loader.load("maler.dir_214.png"));
+            this.array.push(loader.load("maler.dir_215.png"));
+            this.array.push(loader.load("maler.dir_216.png"));
+            this.array.push(loader.load("maler.dir_217.png"));
+            this.array.push(loader.load("maler.dir_218.png"));
 
             this.el.addEventListener('loaded', e => {
                 let mesh = this.el.getObject3D('mesh');
@@ -96,8 +95,7 @@ function setupScene(scene)
     scene.appendChild(troldmand);
 }
 
-function updateMeasurements(greenValue, greenHeight, redValue, redPos, redRot, redHeight, redTextPos, redTextRot)
-{
+function updateMeasurements(greenValue, greenHeight, redValue, redPos, redRot, redHeight, redTextPos, redTextRot) {
     var measureGreen = document.getElementById('measureGreen');
     measureGreen.setAttribute('height', greenHeight);
 
@@ -115,8 +113,7 @@ function updateMeasurements(greenValue, greenHeight, redValue, redPos, redRot, r
     measureGreenText.setAttribute('value', greenValue);
 }
 
-function createMeasurements(scene, width, height)
-{
+function createMeasurements(scene, width, height) {
     var measureGreen = document.createElement('a-cylinder');
     measureGreen.setAttribute('id', 'measureGreen');
     measureGreen.setAttribute('radius', '0.05');
@@ -156,24 +153,23 @@ function createMeasurements(scene, width, height)
 
 function setInnerHTML(elm, html) {
     elm.innerHTML = html;
-    
-    Array.from(elm.querySelectorAll("script"))
-      .forEach( oldScriptEl => {
-        const newScriptEl = document.createElement("script");
-        
-        Array.from(oldScriptEl.attributes).forEach( attr => {
-          newScriptEl.setAttribute(attr.name, attr.value) 
-        });
-        
-        const scriptText = document.createTextNode(oldScriptEl.innerHTML);
-        newScriptEl.appendChild(scriptText);
-        
-        oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
-    });
-  }  
 
-function createButtons(scene)
-{
+    Array.from(elm.querySelectorAll("script"))
+        .forEach(oldScriptEl => {
+            const newScriptEl = document.createElement("script");
+
+            Array.from(oldScriptEl.attributes).forEach(attr => {
+                newScriptEl.setAttribute(attr.name, attr.value)
+            });
+
+            const scriptText = document.createTextNode(oldScriptEl.innerHTML);
+            newScriptEl.appendChild(scriptText);
+
+            oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
+        });
+}
+
+function createButtons(scene) {
     let controlPanelWidth = 5;
     let controlPanelHeight = 3;
     let controlPanelDepth = 0.2;
@@ -197,25 +193,23 @@ function createButtons(scene)
 
     RegisterAFRAMEComponent('pis', {
         schema: {
-            addition: {type: 'int', default: 0}
+            addition: { type: 'int', default: 0 }
         },
 
-        init: function ()
-        {
+        init: function () {
             let fuckAf = this.data.addition;
 
-            this.el.addEventListener('mousedown', function ()
-            {
+            this.el.addEventListener('mousedown', function () {
                 counter = document.getElementById('counter');
-            
+
                 let currentValue = parseInt(counter.getAttribute('value'));
                 if (isNaN(currentValue))
                     currentValue = 0;
-            
+
                 currentValue += fuckAf;
-            
+
                 counter.setAttribute('value', currentValue);
-            
+
                 //var entity = document.getElementById('ambient');
                 //entity.components.sound.playSound();
             });
@@ -224,7 +218,7 @@ function createButtons(scene)
 
     var posButtons = document.createElement('a-entity');
     posButtons.setAttribute('position', -(controlPanelWidth / 4) + ' ' + controlPanelHeight / 8 + ' 0.1');
-console.log("yo what");
+    console.log("yo what");
     var buttonPlus = document.createElement('a-box');
     buttonPlus.setAttribute('rotation', '0 90 0');
     buttonPlus.setAttribute('width', '0.2');
@@ -244,7 +238,7 @@ console.log("yo what");
     // buttonPlus5.setAttribute('src', 'http://localhost:7171/api/Game/af513586-36e8-4f74-b1f1-27e46e4fb8d8/plus5.png');
 
     var minusButtons = document.createElement('a-entity');
-    minusButtons.setAttribute('position',  -(controlPanelWidth / 4) + ' ' + '-1' + ' 0.1');
+    minusButtons.setAttribute('position', -(controlPanelWidth / 4) + ' ' + '-1' + ' 0.1');
 
     var buttonMinus = document.createElement('a-box');
     buttonMinus.setAttribute('rotation', '0 90 0');
@@ -272,28 +266,26 @@ console.log("yo what");
     controlPanel.appendChild(minusButtons);
 
     RegisterAFRAMEComponent("cock",
-    {
-        init: function ()
         {
-            this.el.addEventListener('mousedown', function ()
-            {
-                var elem = document.getElementById('controlPanel');
-                elem.parentNode.removeChild(elem);
-                let shit = document.getElementById("overallTemplate");
-                switchScene("menu.html", "sus.js");
-                /*
-                counter = document.getElementById('counter');
-                if (correctAnswer == parseInt(counter.getAttribute('value')))
-                {
-                    counter.setAttribute('value', '0');
-                    updateSceneToBackWall();
-                }d
-                else
-                    counter.setAttribute('value', 'No!');
-                */
-            });
-        }
-    })
+            init: function () {
+                this.el.addEventListener('mousedown', function () {
+                    var elem = document.getElementById('controlPanel');
+                    elem.parentNode.removeChild(elem);
+                    let shit = document.getElementById("overallTemplate");
+                    switchScene("menu.html", "sus.js");
+                    /*
+                    counter = document.getElementById('counter');
+                    if (correctAnswer == parseInt(counter.getAttribute('value')))
+                    {
+                        counter.setAttribute('value', '0');
+                        updateSceneToBackWall();
+                    }d
+                    else
+                        counter.setAttribute('value', 'No!');
+                    */
+                });
+            }
+        })
 
     var button0 = document.createElement('a-box');
     button0.setAttribute('position', '1 -1 0.1');
@@ -312,20 +304,17 @@ console.log("yo what");
 
 let correctAnswer = 0;
 
-function generateRandomNumber(min, max)
-{
+function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function updateMeasurementValues(measure)
-{
+function updateMeasurementValues(measure) {
     // beregn de korrekte tal.
     let deciliterPrSquareMeter = 2; // TODO mellem 1-4
     correctAnswer = (measure * measure) * deciliterPrSquareMeter;
 }
 
-function updateSceneToBackWall()
-{
+function updateSceneToBackWall() {
     document.getElementById('maler_370').components.sound.playSound();
 
     let measure = generateRandomNumber(2, 5);
