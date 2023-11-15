@@ -72,7 +72,7 @@ function RegisterAFRAMEPrimitive(primitiveName, PrimitiveObj)
     registeredPrimitives[primitiveName] = true;
 }
 
-function RemoveCursor()
+function RemoveNonVRElements()
 {
     // fjern hitmarker
     let cursor = document.querySelector('a-cursor');
@@ -80,10 +80,18 @@ function RemoveCursor()
     
     // idk om det er nødvendigt men fuck it
     document.getElementById('camera').removeAttribute('look-controls');
+    
+    // cookies
+    RemovePopup();
+}
+
+function RemovePopup()
+{
+    document.getElementById('cookiepopup').remove();
 }
 
 createButtons();
 
-document.querySelector('a-scene').addEventListener('enter-vr', RemoveCursor);
+document.querySelector('a-scene').addEventListener('enter-vr', RemoveNonVRElements);
 
 switchScene("/components/menu.html ", "");
