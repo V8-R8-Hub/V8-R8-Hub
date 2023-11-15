@@ -23,7 +23,12 @@ function createButtons()
 function switchScene(htmlFilename, jsFilename)
 {
     // enable loading screen
-    document.getElementById('loadingScreen').setAttribute('visible', 'true');
+    // ja det her shit er nødvendigt fordi .hide ikke forhindre lasers i at intersect med boksen :D
+    let loadingScreen = document.createElement('a-box');
+    loadingScreen.setAttribute('id', 'loadingScreen');
+    loadingScreen.setAttribute('material', 'side: double');
+    loadingScreen.setAttribute('color', '#000000');
+    document.getElementById('camera').appendChild(loadingScreen);
 
     // slet alle registered components
     registeredComponents.forEach((x) => delete AFRAME.components[x]);
@@ -46,8 +51,7 @@ function switchScene(htmlFilename, jsFilename)
         setTimeout(() =>
         {
             // disable loading screen
-            document.getElementById('loadingScreen').emit('hide');
-            document.getElementById('loadingScreen').setAttribute('visible', 'false');
+            loadingScreen.parentNode.removeChild(loadingScreen);
         }, "5000");
     }, "5000");
 }
@@ -68,6 +72,18 @@ function RegisterAFRAMEPrimitive(primitiveName, PrimitiveObj)
     registeredPrimitives[primitiveName] = true;
 }
 
+function RemoveCursor()
+{
+    // fjern hitmarker
+    let cursor = document.querySelector('a-cursor');
+    cursor.parentNode.removeChild(cursor);
+    
+    // idk om det er nødvendigt men fuck it
+    document.getElementById('camera').removeAttribute('look-controls');
+}
+
 createButtons();
+
+document.querySelector('a-scene').addEventListener('enter-vr', RemoveCursor);
 
 switchScene("/components/menu.html ", "");
