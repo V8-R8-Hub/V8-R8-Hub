@@ -19,6 +19,7 @@ RegisterAFRAMEComponent('menu', {
     init: function () {
         this.menu = document.createElement('a-rounded');
         this.el.appendChild(this.menu);
+        document.getElementById('cameraRig').setAttribute('position', '0 1 7');
 
         this.menu.setAttribute('id', this.data.id);
         this.menu.setAttribute("position", { x: -1.5, y: 0.5, z: -3 });

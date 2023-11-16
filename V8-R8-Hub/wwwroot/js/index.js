@@ -46,10 +46,7 @@ async function switchScene(htmlFilename, guid, jsFilename) {
 
     // slet alle registered components
     registeredComponents.forEach((x) => delete AFRAME.components[x]);
-    if (game !== undefined) {
-        window.history.pushState("", game.name, "/api/Game/" + game.guid + "/play");
-
-    }
+    SetHistory(game);
 
     // skift HTML ud
     document.getElementById('overallTemplate').setAttribute('template', 'src: ' + htmlFilename);
@@ -68,6 +65,16 @@ async function switchScene(htmlFilename, guid, jsFilename) {
             loadingScreen.parentNode.removeChild(loadingScreen);
         }, "5000");
     }, "5000");
+}
+
+ 
+function SetHistory(game) {
+    if (game == null) {
+        window.history.pushState("", "GameHub", "/components/");
+        return;
+    }
+    window.history.pushState("", game.name, "/api/Game/" + game.guid + "/play");
+
 }
 
 function RegisterAFRAMEComponent(componentName, componentFunction) {
@@ -106,4 +113,4 @@ createButtons();
 
 document.querySelector('a-scene').addEventListener('enter-vr', RemoveNonVRElements);
 
-switchScene("/components/menu.html ", "");
+switchScene("/components/menu.html ",null, "");

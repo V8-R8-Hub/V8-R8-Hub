@@ -37,7 +37,7 @@ function setupScene(scene) {
     scene.appendChild(wallRight);
 
     var floor = document.createElement('a-plane');
-    floor.setAttribute('src', 'brick.jpg');
+    floor.setAttribute('src', '#brick');
     floor.setAttribute('width', '50');
     floor.setAttribute('height', '50');
     floor.setAttribute('rotation', '-90 0 0');
@@ -272,7 +272,7 @@ function createButtons(scene) {
                     var elem = document.getElementById('controlPanel');
                     elem.parentNode.removeChild(elem);
                     let shit = document.getElementById("overallTemplate");
-                    switchScene("menu.html", "sus.js");
+                    switchScene("menu.html",null, "sus.js");
                     /*
                     counter = document.getElementById('counter');
                     if (correctAnswer == parseInt(counter.getAttribute('value')))
