@@ -1,5 +1,3 @@
-
-
 function setupScene() {
     let scene = document.querySelector("a-gamescene");
     scene.remove();
@@ -10,7 +8,6 @@ function setupScene() {
 
 RegisterAFRAMEComponent('gamescene', {
     init: function () {
-        console.log("SUS");
         CreateImgAsset("ground", "/img/cool-gray-61nfwad1bullevu4.jpg");
         CreateSceneWall(this.el, { x: 0, y: 5, z: -15 }, { x: 0, y: 0, z: 0 }, "30", "30", "#ground");
 

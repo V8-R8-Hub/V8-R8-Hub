@@ -1,14 +1,10 @@
-
-
 let registeredComponents = [];
 let registeredPrimitives = {};
 let gameGuid = "";
 
-
 function SetGameGuid(guid) {
     gameGuid = guid;
 }
-
 
 function createButtons() {
     // tilføj hele lortet til scenen
@@ -29,8 +25,6 @@ function createButtons() {
 }
 
 async function switchScene(htmlFilename, guid, jsFilename) {
-
-
     SetGameGuid(guid);
     await SetUpGameLoader();
 
@@ -67,14 +61,12 @@ async function switchScene(htmlFilename, guid, jsFilename) {
     }, "5000");
 }
 
- 
 function SetHistory(game) {
     if (game == null) {
         window.history.pushState("", "GameHub", "/components/");
         return;
     }
     window.history.pushState("", game.name, "/api/Game/" + game.guid + "/play");
-
 }
 
 function RegisterAFRAMEComponent(componentName, componentFunction) {

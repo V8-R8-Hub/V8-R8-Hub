@@ -5,7 +5,6 @@ RegisterAFRAMEComponent('gamegrid', {
     },
 
     init: function () {
-        console.log("HUH?");
         let getGames = async () => {
             await SetUpGameLoader();
             this.games = GetGamesLoader();
@@ -75,7 +74,6 @@ RegisterAFRAMEComponent('gamegrid', {
 
         container.appendChild(rightButton);
         return container;
-
     },
 
     CreateButton: function (label, onclick) {

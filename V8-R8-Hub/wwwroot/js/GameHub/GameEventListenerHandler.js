@@ -2,11 +2,8 @@
 let Clickable = true;
 
 function AddGameEventListener(element, eventName, onClick) {
-    console.log("AMONGUS")
-
     element.addEventListener(eventName,()=> {
         if (Clickable) {
-
             onClick(); 
         }
     })

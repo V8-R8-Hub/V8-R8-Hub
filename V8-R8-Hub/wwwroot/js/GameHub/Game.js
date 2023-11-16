@@ -7,8 +7,6 @@ RegisterAFRAMEComponent('game', {
     init: function () {
         this.game = GetGamesLoader().getGame(this.data.guid);
 
-        console.log("HAHAH");
-
         this.gameElement = document.createElement("a-image");
         this.gameElement.setAttribute('class', 'Game');
         this.gameElement.setAttribute("width", "3");
@@ -25,7 +23,6 @@ RegisterAFRAMEComponent('game', {
             this.el.appendChild(descriptionElement);
             DeactivateGameEventlisteners();
         });
-
     },
 
     CreateDescriptionElement: function () {
@@ -49,7 +46,6 @@ RegisterAFRAMEPrimitive('a-game', {
 RegisterAFRAMEComponent('description', {
     schema: {
         guid: { type: "string", default: "" }
-
     },
 
     init: function () {
@@ -141,7 +137,6 @@ RegisterAFRAMEComponent('description', {
         gameElement.setAttribute("src", `#${this.game.guid}-thumb`);
 
         return gameElement;
-
     },
 })
 
