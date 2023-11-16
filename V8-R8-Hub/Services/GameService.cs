@@ -3,26 +3,31 @@ using System.Data;
 using V8_R8_Hub.Models.Internal;
 using V8_R8_Hub.Models.Response;
 
-namespace V8_R8_Hub.Services {
-	public interface IGameService {
+namespace V8_R8_Hub.Services
+{
+	public interface IGameService
+	{
 		Task<ObjectIdentifier> CreateGame(string name, string description, VirtualFile gameFile, VirtualFile thumbnailFile);
 		Task<ISet<string>> GetAllowedGameMimeTypes();
 		Task<ISet<string>> GetAllowedThumbnailMimeTypes();
-        Task<GameBrief> GetGame(Guid guid);
-        Task<int> GetGameId(Guid publicId);
-        Task<IEnumerable<GameBrief>> GetGames();
+		Task<GameBrief> GetGame(Guid guid);
+		Task<int> GetGameId(Guid publicId);
+		Task<IEnumerable<GameBrief>> GetGames();
 	}
 
-	public class GameService : IGameService {
+	public class GameService : IGameService
+	{
 		private readonly IDbConnection _connection;
 		private readonly ISafeFileService _safeFileService;
 
-		public GameService(IDbConnector connector, ISafeFileService safeFileService) {
+		public GameService(IDbConnector connector, ISafeFileService safeFileService)
+		{
 			_connection = connector.GetDbConnection();
 			_safeFileService = safeFileService;
 		}
 
-		public async Task<IEnumerable<GameBrief>> GetGames() {
+		public async Task<IEnumerable<GameBrief>> GetGames()
+		{
 			return await _connection.QueryAsync<GameBrief>("""
 				SELECT 
 					g.public_id AS guid,
@@ -36,7 +41,8 @@ namespace V8_R8_Hub.Services {
 			""");
 		}
 
-		public async Task<GameBrief> GetGame(Guid guid) {
+		public async Task<GameBrief> GetGame(Guid guid)
+		{
 			return await _connection.QuerySingleAsync<GameBrief>("""
 				SELECT 
 					g.public_id AS guid,
@@ -49,20 +55,24 @@ namespace V8_R8_Hub.Services {
 					INNER JOIN public_files gf ON g.game_file_id = gf.id
 				WHERE
 					g.public_id = @Guid
-				""", new {
+				""", new
+			{
 				Guid = guid
 			});
 		}
 
-		public async Task<int> GetGameId(Guid publicId) {
+		public async Task<int> GetGameId(Guid publicId)
+		{
 			return await _connection.ExecuteScalarAsync<int>("""
 				SELECT id FROM games WHERE public_id = @PublicId
-			""", new {
+			""", new
+			{
 				PublicId = publicId
 			});
 		}
 
-		public async Task<ObjectIdentifier> CreateGame(string name, string description, VirtualFile gameFile, VirtualFile thumbnailFile) {
+		public async Task<ObjectIdentifier> CreateGame(string name, string description, VirtualFile gameFile, VirtualFile thumbnailFile)
+		{
 			_connection.Open();
 			using var transaction = _connection.BeginTransaction();
 			var gameFileId = await _safeFileService.CreateFileFrom(gameFile, await GetAllowedGameMimeTypes());
@@ -75,29 +85,33 @@ namespace V8_R8_Hub.Services {
 						(@Name, @Description, @GameFileId, @ThumbnailFileId)
 					RETURNING 
 						id, public_id as guid;
-				""", new {
-					Name = name,
-					Description = description,
-					GameFileId = gameFileId.Id,
-					ThumbnailFileId = thumbnailFileId.Id
-				}
+				""", new
+			{
+				Name = name,
+				Description = description,
+				GameFileId = gameFileId.Id,
+				ThumbnailFileId = thumbnailFileId.Id
+			}
 			);
 			transaction.Commit();
 			return gameId;
 		}
 
-		public Task<ISet<string>> GetAllowedGameMimeTypes() {
+		public Task<ISet<string>> GetAllowedGameMimeTypes()
+		{
 			return Task.FromResult<ISet<string>>(new HashSet<string>() {
 				"text/html"
 			});
 		}
 
-		public Task<ISet<string>> GetAllowedThumbnailMimeTypes() {
+		public Task<ISet<string>> GetAllowedThumbnailMimeTypes()
+		{
 			return Task.FromResult<ISet<string>>(new HashSet<string>() {
 				"image/png",
 				"image/jpeg",
 				"image/gif",
-				"image/tiff"
+				"image/tiff",
+
 			});
 		}
 
