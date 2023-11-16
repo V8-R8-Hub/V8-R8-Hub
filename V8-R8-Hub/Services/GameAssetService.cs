@@ -40,7 +40,7 @@ namespace V8_R8_Hub.Services {
 				}
 
 				var gameAssetBriefs = new List<GameAssetBrief>();
-				
+
 				foreach (var assetFile in assetFiles) {
 					var assetFileId = await _safeFileService.CreateFileFrom(assetFile, await GetAllowedGameAssetMimeTypes());
 					gameAssetBriefs.Append(await _connection.QuerySingleAsync<GameAssetBrief>("""
@@ -57,12 +57,14 @@ namespace V8_R8_Hub.Services {
 				transaction.Commit();
 
 				return gameAssetBriefs;
-			} catch (PostgresException ex) {
-				if (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "game_assets_game_id_path_key")
-					throw new DuplicateAssetException("Asset with that name already exists");
-				if (ex.SqlState == PostgresErrorCodes.NotNullViolation && ex.ColumnName == "game_id")
-					throw new UnknownGameException(gameGuid, "Could not find game corresponding with the given guid");
-				throw ex;
+			} catch (PostgresException ex) 
+				when (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "game_assets_game_id_path_key") {
+
+				throw new DuplicateAssetException("Asset with that name already exists");
+			} catch (PostgresException ex) 
+				when (ex.SqlState == PostgresErrorCodes.NotNullViolation && ex.ColumnName == "game_id") {
+
+				throw new UnknownGameException(gameGuid, "Could not find game corresponding with the given guid");
 			}
 		}
 

@@ -26,13 +26,12 @@ namespace V8_R8_Hub.Services {
 					UserId = userId,
 					GameGuid = gameGuid
 				});
-			} catch (PostgresException ex) {
-				if (ex.SqlState == PostgresErrorCodes.InvalidTextRepresentation) {
-					throw new InvalidJsonException("Given json was invalid");
-				} else if (ex.SqlState == PostgresErrorCodes.NotNullViolation) {
-					throw new UnknownGameException(gameGuid, "Game not found");
-				}
-				throw ex;
+			} catch (PostgresException ex)
+				when (ex.SqlState == PostgresErrorCodes.InvalidTextRepresentation) {
+				throw new InvalidJsonException("Given json was invalid");
+			} catch (PostgresException ex) 
+				when (ex.SqlState == PostgresErrorCodes.NotNullViolation) {
+				throw new UnknownGameException(gameGuid, "Game not found");
 			}
 		}
 	}
