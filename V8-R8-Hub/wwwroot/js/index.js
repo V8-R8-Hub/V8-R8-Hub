@@ -66,7 +66,7 @@ function SetHistory(game) {
         window.history.pushState("", "GameHub", "/components/");
         return;
     }
-    window.history.pushState("", game.name, "/api/Game/" + game.guid + "/play");
+    window.history.pushState("", game.name, "/api/Game/" + game.guid + "/assets/play");
 }
 
 function RegisterAFRAMEComponent(componentName, componentFunction) {

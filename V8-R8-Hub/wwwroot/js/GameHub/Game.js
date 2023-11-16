@@ -100,6 +100,7 @@ RegisterAFRAMEComponent('description', {
         PlayButton.setAttribute("color", "grey");
 
         PlayButton.addEventListener('mousedown', () => {
+            ActivateGameEventlisteners();
             switchScene(this.game.htmlUrl, this.game.guid, "");
         });
 
