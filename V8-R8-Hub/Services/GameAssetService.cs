@@ -116,13 +116,16 @@ namespace V8_R8_Hub.Services {
 		public Task<ISet<string>> GetAllowedGameAssetMimeTypes() {
 			return Task.FromResult<ISet<string>>(new HashSet<string>() {
 				"text/javascript",
-				"text/plain",
+				"text/plain",	
 				"text/css",
 				"image/png",
 				"image/jpeg",
 				"image/gif",
-				"image/tiff"
-			});
+				"image/tiff",
+				"audio/wav",
+				"application/x-javascript", 
+				"audio/x-wav", 
+            });
 		}
 	}
 }

@@ -18,31 +18,35 @@ namespace V8_R8_Hub.Services {
 		Task RemoveTag(Guid gameGuid, string tag);
 	}
 
-	public class GameService : IGameService {
+	public class GameService : IGameService
+	{
 		private readonly IDbConnection _connection;
 		private readonly ISafeFileService _safeFileService;
 
-		public GameService(IDbConnector connector, ISafeFileService safeFileService) {
+		public GameService(IDbConnector connector, ISafeFileService safeFileService)
+		{
 			_connection = connector.GetDbConnection();
 			_safeFileService = safeFileService;
 		}
 
-		public async Task<IEnumerable<GameBrief>> GetGames() {
+		public async Task<IEnumerable<GameBrief>> GetGames()
+		{
 			return await _connection.QueryAsync<GameBrief>("""
-				SELECT 
-					g.public_id AS guid,
-					g.name,
-					g.description,
-					tf.public_id AS thumbnail_guid,
-					gf.public_id AS game_blob_guid,
-					(SELECT string_agg(t.name, ',') FROM game_tags gt LEFT JOIN tags t ON t.id = gt.tag_id WHERE gt.game_id = g.id) AS comma_seperated_tags
-				FROM games g
-				INNER JOIN public_files tf ON g.thumbnail_file_id = tf.id
-				INNER JOIN public_files gf ON g.game_file_id = gf.id
+			SELECT 
+							g.public_id AS guid,
+							g.name,
+							g.description,
+							tf.public_id AS thumbnail_guid,
+							gf.public_id AS game_blob_guid,
+							COALESCE((SELECT string_agg(t.name, ',') FROM game_tags gt LEFT JOIN tags t ON t.id = gt.tag_id WHERE gt.game_id = g.id), '') AS comma_seperated_tags
+			FROM games g
+			INNER JOIN public_files tf ON g.thumbnail_file_id = tf.id
+			INNER JOIN public_files gf ON g.game_file_id = gf.id
 			""");
 		}
 
-		public async Task<GameBrief> GetGame(Guid guid) {
+		public async Task<GameBrief> GetGame(Guid guid)
+		{
 			return await _connection.QuerySingleAsync<GameBrief>("""
 				SELECT 
 					g.public_id AS guid,
@@ -56,20 +60,24 @@ namespace V8_R8_Hub.Services {
 					INNER JOIN public_files gf ON g.game_file_id = gf.id
 				WHERE
 					g.public_id = @Guid
-				""", new {
+				""", new
+			{
 				Guid = guid
 			});
 		}
 
-		public async Task<int> GetGameId(Guid publicId) {
+		public async Task<int> GetGameId(Guid publicId)
+		{
 			return await _connection.ExecuteScalarAsync<int>("""
 				SELECT id FROM games WHERE public_id = @PublicId
-			""", new {
+			""", new
+			{
 				PublicId = publicId
 			});
 		}
 
-		public async Task<ObjectIdentifier> CreateGame(string name, string description, VirtualFile gameFile, VirtualFile thumbnailFile) {
+		public async Task<ObjectIdentifier> CreateGame(string name, string description, VirtualFile gameFile, VirtualFile thumbnailFile)
+		{
 			_connection.Open();
 			using var transaction = _connection.BeginTransaction();
 			var gameFileId = await _safeFileService.CreateFileFrom(gameFile, await GetAllowedGameMimeTypes());
@@ -93,18 +101,21 @@ namespace V8_R8_Hub.Services {
 			return gameId;
 		}
 
-		public Task<ISet<string>> GetAllowedGameMimeTypes() {
+		public Task<ISet<string>> GetAllowedGameMimeTypes()
+		{
 			return Task.FromResult<ISet<string>>(new HashSet<string>() {
 				"text/html"
 			});
 		}
 
-		public Task<ISet<string>> GetAllowedThumbnailMimeTypes() {
+		public Task<ISet<string>> GetAllowedThumbnailMimeTypes()
+		{
 			return Task.FromResult<ISet<string>>(new HashSet<string>() {
 				"image/png",
 				"image/jpeg",
 				"image/gif",
-				"image/tiff"
+				"image/tiff",
+
 			});
 		}
 
