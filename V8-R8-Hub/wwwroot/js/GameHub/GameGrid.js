@@ -86,8 +86,7 @@ RegisterAFRAMEComponent('gamegrid', {
     GoToMenu: function () {
         ClearMenu();
         let menu = document.createElement("a-menu");
-
-        this.Ascene.appendChild(menu);
+        this.el.sceneEl.appendChild(menu);
     },
 
     CreateGameContainer: function () {
