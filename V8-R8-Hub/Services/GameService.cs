@@ -64,18 +64,21 @@ namespace V8_R8_Hub.Services {
 			return gameId;
 		}
 
-		public Task<ISet<string>> GetAllowedGameMimeTypes() {
+		public Task<ISet<string>> GetAllowedGameMimeTypes()
+		{
 			return Task.FromResult<ISet<string>>(new HashSet<string>() {
 				"text/html"
 			});
 		}
 
-		public Task<ISet<string>> GetAllowedThumbnailMimeTypes() {
+		public Task<ISet<string>> GetAllowedThumbnailMimeTypes()
+		{
 			return Task.FromResult<ISet<string>>(new HashSet<string>() {
 				"image/png",
 				"image/jpeg",
 				"image/gif",
-				"image/tiff"
+				"image/tiff",
+
 			});
 		}
 
