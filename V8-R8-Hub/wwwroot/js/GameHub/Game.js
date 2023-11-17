@@ -119,7 +119,7 @@ RegisterAFRAMEComponent('description', {
 
         exitButton.setAttribute('position', { x: 4.5, y: 4.5, z: 0.05 })
         let exitText = this.CreateText("X", "black");
-        console.log("SUS");
+
 
         exitButton.addEventListener("mousedown", () => {
             this.descriptionElement.remove();

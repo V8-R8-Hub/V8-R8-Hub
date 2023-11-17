@@ -8,7 +8,7 @@ RegisterAFRAMEComponent('gamegrid', {
         let getGames = async () => {
             await SetUpGameLoader();
             this.games = GetGamesLoader();
-            console.log(this.games);
+
             this.gamesPerPage = 9;
             this.gamesPerRow = 3;
             this.games_on_page = [];
@@ -120,7 +120,7 @@ RegisterAFRAMEComponent('gamegrid', {
             let games_on_row = games_on_page.slice(i, i + this.gamesPerRow);
             let y_coordinates = (i * 4) / this.gamesPerRow;
             let row_element = document.createElement("a-entity");
-            console.log(y_coordinates);
+
             row_element.setAttribute("position", { x: 0, y: y_coordinates, z: 0 })
 
             for (const [idx, game] of games_on_row.entries()) {
@@ -138,7 +138,7 @@ RegisterAFRAMEComponent('gamegrid', {
     RenderGameElement: function (row, game, x_coordinates) {
         let gameElement = document.createElement("a-game");
         gameElement.setAttribute("position", { x: x_coordinates, y: 0, z: 0 })
-        console.log("HUHU")
+
         gameElement.setAttribute("guid", game.guid);
 
         row.appendChild(gameElement);

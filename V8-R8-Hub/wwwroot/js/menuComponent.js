@@ -85,7 +85,7 @@ RegisterAFRAMEComponent('menu', {
         document.querySelector('#Options').addEventListener('mousedown', (evt) => {
             this.ClearMenu();
 
-            console.log(this)
+
             let arr = ['Options', 'Right', 'Left', 'Back'];
             this.AddMenuItemsToMenu(this.menu, arr, 1.7);
             let back = document.querySelector('#Back');

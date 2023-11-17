@@ -29,7 +29,6 @@ async function switchScene(htmlFilename, guid, jsFilename) {
     await SetUpGameLoader();
 
     let game = GetGamesLoader().getGame(guid);
-    console.log(game);
     // enable loading screen
     // ja det her shit er nødvendigt fordi .hide ikke forhindre lasers i at intersect med boksen :D
     let loadingScreen = document.createElement('a-box');
@@ -46,9 +45,9 @@ async function switchScene(htmlFilename, guid, jsFilename) {
     document.getElementById('overallTemplate').setAttribute('template', 'src: ' + htmlFilename);
     setTimeout(() => {
         // eksekvere JS
-        console.log(jsFilename);
+
         let files = document.getElementById('overallTemplate').querySelectorAll("script");
-        console.log(files);
+
 
         files.forEach((file) => {
             fetch(file.attributes.src.value).then(r => r.text()).then(eval)
@@ -83,21 +82,19 @@ function RegisterAFRAMEPrimitive(primitiveName, PrimitiveObj) {
     registeredPrimitives[primitiveName] = true;
 }
 
-function RemoveNonVRElements()
-{
+function RemoveNonVRElements() {
     // fjern hitmarker
     let cursor = document.querySelector('a-cursor');
     cursor.parentNode.removeChild(cursor);
-    
+
     // idk om det er nødvendigt men fuck it
     document.getElementById('camera').removeAttribute('look-controls');
-    
+
     // cookies
     RemovePopup();
 }
 
-function RemovePopup()
-{
+function RemovePopup() {
     document.getElementById('cookiepopup').remove();
 }
 
@@ -105,4 +102,4 @@ createButtons();
 
 document.querySelector('a-scene').addEventListener('enter-vr', RemoveNonVRElements);
 
-switchScene("/components/menu.html ",null, "");
+switchScene("/components/menu.html ", null, "");
