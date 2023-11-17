@@ -122,9 +122,9 @@ namespace V8_R8_Hub.Services {
 				"image/jpeg",
 				"image/gif",
 				"image/tiff",
-                "audio/wav",
-                "application/x-javascript", 
-                "audio/x-wav", 
+				"audio/wav",
+				"application/x-javascript", 
+				"audio/x-wav", 
             });
 		}
 	}
