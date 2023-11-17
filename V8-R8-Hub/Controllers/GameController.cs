@@ -15,15 +15,11 @@ namespace V8_R8_Hub.Controllers {
 	public class GameController : ControllerBase {
 		private readonly IGameAssetService _gameAssetService;
 		private readonly IGameService _gameService;
-		private readonly IPublicFileService _publicFileService;
-		private readonly ISafeFileService _safeFileService;
 		private readonly ILogger<GameController> _logger;
 
-		public GameController(IGameAssetService gameAssetService, IGameService gameService, IPublicFileService publicFileService, ISafeFileService safeFileService, ILogger<GameController> gameController) {
+		public GameController(IGameAssetService gameAssetService, IGameService gameService, ILogger<GameController> gameController) {
 			_gameAssetService = gameAssetService;
 			_gameService = gameService;
-			_publicFileService = publicFileService;
-			_safeFileService = safeFileService;
 			_logger = gameController;
 		}
 
@@ -60,7 +56,7 @@ namespace V8_R8_Hub.Controllers {
 				Description = gameBrief.Description,
 				ThumbnailUrl = Url.Action("GetFile", "PublicFile", new { fileGuid = gameBrief.ThumbnailGuid }),
 				GameBlobUrl = Url.Action("GetFile", "PublicFile", new { fileGuid = gameBrief.GameBlobGuid }),
-				Tags = gameBrief.CommaSeperatedTags.Split(",").ToList()
+				Tags = gameBrief.Tags.ToList()
 			}));
 		}
 
@@ -116,7 +112,7 @@ namespace V8_R8_Hub.Controllers {
 		[HttpDelete("{guid:guid}/assets/{path}", Name = "DeleteGameAsset")]
 		[ProducesResponseType(typeof(GameAssetBrief), 200)]
 		[ProducesResponseType(404)]
-		public async Task<IActionResult> DeleteGameAsset(Guid guid, string path		) {
+		public async Task<IActionResult> DeleteGameAsset(Guid guid, string path) {
 			try {
 				await _gameAssetService.DeleteGameAsset(guid, path);
 				return Ok();

@@ -2,18 +2,18 @@
 using V8_R8_Hub.Models.DB;
 using V8_R8_Hub.Models.Exceptions;
 using V8_R8_Hub.Models.Internal;
+using V8_R8_Hub.Repositories;
 
 namespace V8_R8_Hub.Services {
-	public interface ISafeFileService {
+	public interface IFileService {
 		Task<ObjectIdentifier> CreateFileFrom(VirtualFile file, ISet<string> allowedMimeTypes);
 	}
-	public class SafeFileService : ISafeFileService {
-		private readonly IPublicFileService _fileService;
-		private readonly ILogger<SafeFileService> _logger;
+	public class FileService : IFileService {
+		private readonly IFileRepository _fileRepository;
 
-		public SafeFileService(ILogger<SafeFileService> logger, IPublicFileService fileService) {
-			_logger = logger;
-			_fileService = fileService;
+		public FileService(IFileRepository fileRepository) {
+			_fileRepository = fileRepository;
+
 		}
 
 		public async Task<ObjectIdentifier> CreateFileFrom(VirtualFile file, ISet<string> allowedMimeTypes) {
@@ -23,8 +23,12 @@ namespace V8_R8_Hub.Services {
 			using (var memoryStream = new MemoryStream()) {
 				using var stream = file.GetStream();
 				stream.CopyTo(memoryStream);
-				return await _fileService.CreateFile(file.FileName, file.MimeType, memoryStream.ToArray());
+				return await _fileRepository.CreateFile(file.FileName, file.MimeType, memoryStream.ToArray());
 			}
+		}
+
+		public async Task<FileData?> GetFile(Guid guid) {
+			return await _fileRepository.GetFile(guid);
 		}
 	}
 }
