@@ -123,8 +123,8 @@ namespace V8_R8_Hub.Services {
 				"image/gif",
 				"image/tiff",
                 "audio/wav",
-                "application/x-javascript", // safari uploader .js i det her format
-                "audio/x-wav", // safari uploader .wav i det her format
+                "application/x-javascript", 
+                "audio/x-wav", 
             });
 		}
 	}
