@@ -1,3 +1,4 @@
+let EventHandler = new ToggleAbleEventHandler();
 RegisterAFRAMEComponent('game', {
     schema: {
         guid: { type: "string", default: "" }
@@ -11,17 +12,18 @@ RegisterAFRAMEComponent('game', {
         this.gameElement.setAttribute('class', 'Game');
         this.gameElement.setAttribute("width", "3");
         this.gameElement.setAttribute("height", "3");
+
         this.gameElement.setAttribute("src", `#${this.game.guid}-thumb`);
         this.ShowDescriptionOnClick();
         this.el.appendChild(this.gameElement);
     },
 
     ShowDescriptionOnClick: function () {
-        AddGameEventListener(this.gameElement, "mousedown", () => {
+        EventHandler.AddEventListener(this.gameElement, "mousedown", () => {
             let descriptionElement = this.CreateDescriptionElement();
 
             this.el.appendChild(descriptionElement);
-            DeactivateGameEventlisteners();
+            EventHandler.DeactivateEventlisteners();
         });
     },
 
@@ -100,7 +102,7 @@ RegisterAFRAMEComponent('description', {
         PlayButton.setAttribute("color", "grey");
 
         PlayButton.addEventListener('mousedown', () => {
-            ActivateGameEventlisteners();
+            EventHandler.ActivateEventlisteners();
             switchScene(this.game.htmlUrl, this.game.guid, "");
         });
 
@@ -123,7 +125,7 @@ RegisterAFRAMEComponent('description', {
 
         exitButton.addEventListener("mousedown", () => {
             this.descriptionElement.remove();
-            ActivateGameEventlisteners();
+            EventHandler.ActivateEventlisteners();
         });
 
         exitButton.appendChild(exitText);
