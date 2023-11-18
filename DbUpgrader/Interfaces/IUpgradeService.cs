@@ -8,5 +8,6 @@ using System.Threading.Tasks;
 namespace DBUpgrader.Interfaces {
     internal interface IUpgradeService {
         Task UpgradeTo(string upgraderName, UpgradeConfig config);
+        Task UpgradeToLatest(UpgradeConfig config);
     }
 }

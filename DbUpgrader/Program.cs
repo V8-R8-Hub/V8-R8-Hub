@@ -48,6 +48,21 @@ upgradeCommand.SetHandler(async (upgraderTarget, allowDown) => {
 	});
 }, upgraderTargetArgument, allowDownOption);
 
+var upgradeLatestCommand = new Command(name: "upgrade-latest", description: "Upgrades to latest upgrader");
+
+upgradeLatestCommand.AddOption(allowDownOption);
+
+upgradeLatestCommand.SetHandler(async (allowDown) => {
+	var upgradeTrackerRepository = new UpgradeTrackerRepository(connectionFactory);
+	var upgradePlannerService = new UpgradePlannerService(upgraderRepository, upgradeTrackerRepository);
+	var upgradeService = new UpgradeService(connectionFactory, upgradePlannerService);
+	await WithDefaultExceptionHandling(async () => {
+		await upgradeService.UpgradeToLatest(new UpgradeConfig() {
+			AllowDown = allowDown
+		});
+	});
+}, allowDownOption);
+
 var listPathCommand = new Command(name: "list-path", description: "Lists the generated path for reaching to the specified upgrader");
 listPathCommand.AddArgument(upgraderTargetArgument);
 
