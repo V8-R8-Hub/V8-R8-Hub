@@ -30,3 +30,7 @@ jobs:
         run: ./.github/test-bootstrap.sh
       - name: Run all upgraders
         run: ./DbUpgrader/bin/Debug/net7.0/DbUpgrader upgrade-latest
+      - name: Run all downgraders
+        run: ./DbUpgrader/bin/Debug/net7.0/DbUpgrader upgrade InitUpgrader --allow-down
+      - name: Run all upgraders
+        run: ./DbUpgrader/bin/Debug/net7.0/DbUpgrader upgrade-latest

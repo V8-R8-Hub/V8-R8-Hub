@@ -45,8 +45,10 @@ namespace DBUpgrader.Services
 			try {
 				foreach (var upgraderAction in upgradePath) {
 					if (upgraderAction.UpgraderActionType == UpgraderActionType.Up) {
+						Console.WriteLine($"{upgraderAction.Upgrader.Name} UP");
 						await upgraderAction.Upgrader.Up(connection);
 					} else if (upgraderAction.UpgraderActionType == UpgraderActionType.Down) {
+						Console.WriteLine($"{upgraderAction.Upgrader.Name} DOWN");
 						await upgraderAction.Upgrader.Down(connection);
 					}
 				}
