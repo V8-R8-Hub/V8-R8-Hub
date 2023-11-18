@@ -18,10 +18,10 @@ namespace UnitTest {
 		public GameRepositoryTest() {
 			_configProvider = Substitute.For<IConfigProvider>();
 			_configProvider.Configure().DatabaseName.Returns("v8_r8_test");
-			_gameRepository = new GameRepository()
+			//_gameRepository = new GameRepository();
 		}
 
-		[Fact]
-		public async Task 
+		//[Fact]
+		//public async Task 
 	}
 }
