@@ -1,6 +1,10 @@
 name: Backend unit tests
 run-name: Backend unit test
-on: [push]
+on:
+  push:
+    branches:
+      - main
+      - Main-unit-tests
 jobs:
   build:
     runs-on: ubuntu-latest
