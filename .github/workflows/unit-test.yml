@@ -12,8 +12,6 @@ jobs:
           dotnet-version: 7.0.x
       - name: Install dependencies
         run: dotnet restore
-      - name: Set permissions
-        run: chmod u+x .github/test-bootstrap.sh
       - name: Build
         run: dotnet build
       - name: Test with the dotnet CLI
