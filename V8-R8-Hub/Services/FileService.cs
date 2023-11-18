@@ -7,6 +7,7 @@ using V8_R8_Hub.Repositories;
 namespace V8_R8_Hub.Services {
 	public interface IFileService {
 		Task<ObjectIdentifier> CreateFileFrom(VirtualFile file, ISet<string> allowedMimeTypes);
+		Task<FileData?> GetFile(Guid guid);
 	}
 	public class FileService : IFileService {
 		private readonly IFileRepository _fileRepository;
