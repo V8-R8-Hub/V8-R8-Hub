@@ -29,4 +29,4 @@ jobs:
       - name: Bootstrap upgrader
         run: ./.github/test-bootstrap.sh
       - name: Run all upgraders
-        run: ./DbUpgrader/bin/Debug/net7.0/DbUpgrader.exe upgrade-latest
+        run: ./DbUpgrader/bin/Debug/net7.0/DbUpgrader upgrade-latest
