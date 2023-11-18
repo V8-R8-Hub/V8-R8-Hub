@@ -178,6 +178,7 @@ bootstrapCommand.SetHandler(
 
 
 rootCommand.Add(upgradeCommand);
+rootCommand.Add(upgradeLatestCommand);
 rootCommand.Add(listPathCommand);
 rootCommand.Add(bootstrapCommand);
 
