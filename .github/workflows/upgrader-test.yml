@@ -27,6 +27,6 @@ jobs:
       - name: Build
         run: dotnet build
       - name: Bootstrap upgrader
-        run: ./.github/workflows/test-bootstrap.sh
+        run: ./.github/test-bootstrap.sh
       - name: Run all upgraders
         run: ./DbUpgrader/bin/Debug/net7.0/DbUpgrader.exe upgrade-latest
