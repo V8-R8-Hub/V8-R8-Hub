@@ -1,5 +1,5 @@
-name: Backend unit tests
-run-name: Backend unit test
+name: Upgrader tests
+run-name: Upgrader test
 on: push
 jobs:
   build:
