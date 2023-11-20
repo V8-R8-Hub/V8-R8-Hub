@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using V8_R8_Hub.Models.Exceptions;
 using V8_R8_Hub.Models.Internal;
 using V8_R8_Hub.Models.Response;
+using V8_R8_Hub.Repositories;
 
 namespace V8_R8_Hub.Services {
 	public interface IGameService {
@@ -13,91 +14,53 @@ namespace V8_R8_Hub.Services {
 		Task<ISet<string>> GetAllowedGameMimeTypes();
 		Task<ISet<string>> GetAllowedThumbnailMimeTypes();
 		Task<GameBrief> GetGame(Guid guid);
-		Task<int> GetGameId(Guid publicId);
 		Task<IEnumerable<GameBrief>> GetGames();
 		Task RemoveTag(Guid gameGuid, string tag);
 	}
 
-	public class GameService : IGameService
-	{
-		private readonly IDbConnection _connection;
-		private readonly ISafeFileService _safeFileService;
+	public class GameService : IGameService {
+		private readonly IFileService _safeFileService;
+		private readonly IGameRepository _gameRepository;
+		private readonly IUnitOfWorkContext _uow;
 
-		public GameService(IDbConnector connector, ISafeFileService safeFileService)
-		{
-			_connection = connector.GetDbConnection();
+		public GameService(
+			IFileService safeFileService,
+			IUnitOfWorkContext uow,
+			IGameRepository gameRepository
+		) {
 			_safeFileService = safeFileService;
+			_uow = uow;
+			_gameRepository = gameRepository;
 		}
 
-		public async Task<IEnumerable<GameBrief>> GetGames()
-		{
-			return await _connection.QueryAsync<GameBrief>("""
-			SELECT 
-							g.public_id AS guid,
-							g.name,
-							g.description,
-							tf.public_id AS thumbnail_guid,
-							gf.public_id AS game_blob_guid,
-							COALESCE((SELECT string_agg(t.name, ',') FROM game_tags gt LEFT JOIN tags t ON t.id = gt.tag_id WHERE gt.game_id = g.id), '') AS comma_seperated_tags
-			FROM games g
-			INNER JOIN public_files tf ON g.thumbnail_file_id = tf.id
-			INNER JOIN public_files gf ON g.game_file_id = gf.id
-			""");
+		public async Task<IEnumerable<GameBrief>> GetGames() {
+			return (await _gameRepository.GetGames()).Select(MapGameBriefQueryModel);
 		}
 
-		public async Task<GameBrief> GetGame(Guid guid)
-		{
-			return await _connection.QuerySingleAsync<GameBrief>("""
-				SELECT 
-					g.public_id AS guid,
-					g.name,
-					g.description,
-					tf.public_id AS thumbnail_guid,
-					gf.public_id AS game_blob_guid,
-					(SELECT string_agg(t.name, ',') FROM game_tags gt LEFT JOIN tags t ON t.id = gt.tag_id WHERE gt.game_id = g.id) AS comma_seperated_tags
-				FROM games g
-					INNER JOIN public_files tf ON g.thumbnail_file_id = tf.id
-					INNER JOIN public_files gf ON g.game_file_id = gf.id
-				WHERE
-					g.public_id = @Guid
-				""", new
-			{
-				Guid = guid
-			});
+		public async Task<GameBrief> GetGame(Guid guid) {
+			return MapGameBriefQueryModel(await _gameRepository.GetGame(guid));
 		}
 
-		public async Task<int> GetGameId(Guid publicId)
-		{
-			return await _connection.ExecuteScalarAsync<int>("""
-				SELECT id FROM games WHERE public_id = @PublicId
-			""", new
-			{
-				PublicId = publicId
-			});
-		}
+		private static GameBrief MapGameBriefQueryModel(GameBriefQueryModel model) => new GameBrief {
+			Guid = model.Guid,
+			Name = model.Name,
+			Description = model.Description,
+			ThumbnailGuid = model.ThumbnailGuid,
+			GameBlobGuid = model.GameBlobGuid,
+			Tags = model.CommaSeperatedTags?.Split(',') ?? Enumerable.Empty<string>()
+		};
 
-		public async Task<ObjectIdentifier> CreateGame(string name, string description, VirtualFile gameFile, VirtualFile thumbnailFile)
-		{
-			_connection.Open();
-			using var transaction = _connection.BeginTransaction();
+		public async Task<ObjectIdentifier> CreateGame(string name, string description, VirtualFile gameFile, VirtualFile thumbnailFile) {
+			await _uow.Begin();
 			var gameFileId = await _safeFileService.CreateFileFrom(gameFile, await GetAllowedGameMimeTypes());
 			var thumbnailFileId = await _safeFileService.CreateFileFrom(thumbnailFile, await GetAllowedThumbnailMimeTypes());
-
-			ObjectIdentifier gameId = await _connection.QuerySingleAsync<ObjectIdentifier>("""
-					INSERT INTO games
-						(name, description, game_file_id, thumbnail_file_id)
-					VALUES 
-						(@Name, @Description, @GameFileId, @ThumbnailFileId)
-					RETURNING 
-						id, public_id as guid;
-				""", new {
+			var gameId = await _gameRepository.CreateGame(new CreateGameModel() {
 				Name = name,
 				Description = description,
 				GameFileId = gameFileId.Id,
 				ThumbnailFileId = thumbnailFileId.Id
-			}
-			);
-			transaction.Commit();
+			});
+			await _uow.Commit();
 			return gameId;
 		}
 
@@ -124,66 +87,25 @@ namespace V8_R8_Hub.Services {
 			if (!IsTagAllowed(sanitizedTag)) {
 				throw new IllegalTagException(sanitizedTag, "Tag contains illegal characters");
 			}
-			
-			_connection.Open();
-			using var transaction = _connection.BeginTransaction();
-			
-			var gameId = await _connection.QuerySingleOrDefaultAsync<int?>("SELECT id FROM games WHERE public_id=@GameGuid", new {
-				GameGuid = gameGuid
-			});
-
-			if (gameId == null) {
-				throw new UnknownGameException(gameGuid, "Unknown game");
-			}
-
-			var tagId = await _connection.QuerySingleOrDefaultAsync<int?>("SELECT id FROM tags WHERE name=@Tag", new {
-				Tag = sanitizedTag
-			});
-			
-			if (tagId == null) {
-				tagId = await _connection.QuerySingleAsync<int>("""
-					INSERT INTO tags (name)
-						VALUES (@Tag)
-					RETURNING id
-					""", new {
-					Tag = tag
-				});
-			}
-			try {
-				await _connection.ExecuteAsync("""
-				INSERT INTO game_tags (game_id, tag_id)
-					VALUES (@GameId, @TagId)
-				""", new {
-					GameId = gameId,
-					TagId = tagId
-				});
-			} catch (PostgresException ex)
-				when (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "game_tags_pkey")
-			{
-				throw new DuplicateTagException(sanitizedTag, "The given game already has the given tag");
-			}
-
-			transaction.Commit();
+			await _uow.Begin();
+			var tagId = await _gameRepository.CreateOrGetTagId(sanitizedTag);
+			await _gameRepository.AddGameTag(gameGuid, tagId);
+			await _uow.Commit();
 		}
 
 		public async Task RemoveTag(Guid gameGuid, string tag) {
 			var sanitizedTag = SanitizeTag(tag);
 
-			await _connection.QuerySingleOrDefaultAsync<int?>("""
-					DELETE FROM game_tags 
-						WHERE game_id = (SELECT id FROM games WHERE public_id = @GameGuid)
-						AND tag_id = (SELECT id FROM tags WHERE name = @Tag)
-				""", new {
-				GameGuid = gameGuid,
-				Tag = sanitizedTag
-			});
+			await _uow.Begin();
+			await _gameRepository.RemoveGameTag(gameGuid, sanitizedTag);
+			await _uow.Commit();
 		}
 
-		private bool IsTagAllowed(string tag) {
-			return (new Regex("^([A-Za-z ])+$")).IsMatch(tag);
+		private static bool IsTagAllowed(string tag) {
+			return new Regex("^([A-Za-z ])+$").IsMatch(tag);
 		}
 
-		private string SanitizeTag(string tag) {
+		private static string SanitizeTag(string tag) {
 			return tag.Trim().ToLower();
 		}
 	}

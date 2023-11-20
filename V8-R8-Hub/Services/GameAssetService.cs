@@ -1,9 +1,6 @@
-﻿using Dapper;
-using Npgsql;
-using System.Data;
-using V8_R8_Hub.Models.DB;
-using V8_R8_Hub.Models.Exceptions;
+﻿using V8_R8_Hub.Models.Exceptions;
 using V8_R8_Hub.Models.Internal;
+using V8_R8_Hub.Repositories;
 
 namespace V8_R8_Hub.Services {
 	public interface IGameAssetService {
@@ -15,102 +12,51 @@ namespace V8_R8_Hub.Services {
 	}
 
 	public class GameAssetService : IGameAssetService {
-		private readonly IDbConnection _connection;
-		private readonly ISafeFileService _safeFileService;
-
-		public GameAssetService(IDbConnector connector, ISafeFileService safeFileService) {
-			_connection = connector.GetDbConnection();
+		private readonly IFileService _safeFileService;
+		private readonly IFileRepository _publicFileService;
+		private readonly IGameAssetRepository _gameAssetRepository;
+		private readonly IUnitOfWorkContext _uow;
+		private readonly IGameRepository _gameRepository;
+		public GameAssetService(IFileService safeFileService, IGameAssetRepository gameAssetService, IUnitOfWorkContext uow, IGameRepository gameRepository, IFileRepository publicFileService) {
 			_safeFileService = safeFileService;
+			_gameAssetRepository = gameAssetService;
+			_uow = uow;
+			_gameRepository = gameRepository;
+			_publicFileService = publicFileService;
 		}
 
 		public async Task<IEnumerable<GameAssetBrief>> AddGameAssets(Guid gameGuid, IEnumerable<VirtualFile> assetFiles) {
-			try {
-				_connection.Open();
+			await _uow.Begin();
 
-				using var transaction = _connection.BeginTransaction();
+			int gameId = await _gameRepository.GetGameId(gameGuid) 
+				?? throw new UnknownGameException(gameGuid, "Could not find game corresponding with the given guid");
 
-				int? gameId = await _connection.QuerySingleOrDefaultAsync<int?>("""
-					SELECT id FROM games WHERE public_id = @GameGuid
-				""", new {
-					GameGuid = gameGuid
-				});
-
-				if (gameId == null) {
-					throw new UnknownGameException(gameGuid, "Could not find game corresponding with the given guid");
-				}
-
-				var gameAssetBriefs = new List<GameAssetBrief>();
-
-				foreach (var assetFile in assetFiles) {
-					var assetFileId = await _safeFileService.CreateFileFrom(assetFile, await GetAllowedGameAssetMimeTypes());
-					gameAssetBriefs.Append(await _connection.QuerySingleAsync<GameAssetBrief>("""
-						INSERT INTO game_assets (game_id, file_id, path)
-							VALUES (@GameId, @FileId, @Path)
-							RETURNING path;
-					""", new {
-						GameId = gameId,
-						FileId = assetFileId.Id,
-						Path = assetFile.FileName
-					}));
-				}
-
-				transaction.Commit();
-
-				return gameAssetBriefs;
-			} catch (PostgresException ex) 
-				when (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "game_assets_game_id_path_key") {
-
-				throw new DuplicateAssetException("Asset with that name already exists");
-			} catch (PostgresException ex) 
-				when (ex.SqlState == PostgresErrorCodes.NotNullViolation && ex.ColumnName == "game_id") {
-
-				throw new UnknownGameException(gameGuid, "Could not find game corresponding with the given guid");
+			var gameAssetBriefs = new List<GameAssetBrief>();
+			foreach (var assetFile in assetFiles) {
+				var assetFileId = await _safeFileService.CreateFileFrom(assetFile, await GetAllowedGameAssetMimeTypes());
+				gameAssetBriefs.Add(await _gameAssetRepository.AddGameAsset(gameId, assetFileId.Id, assetFile.FileName));
 			}
+
+			await _uow.Commit();
+			return gameAssetBriefs;
 		}
 
 		public async Task DeleteGameAsset(Guid gameId, string filePath) {
-			_connection.Open();
-			using var transaction = _connection.BeginTransaction();
-			var deleted = await _connection.QueryAsync<int>("""
-				DELETE FROM game_assets 
-					WHERE 
-					game_id = (SELECT id FROM games WHERE public_id = @GameId)
-					AND path = @Path
-				RETURNING 1;
-			""", new {
-				GameId = gameId,
-				Path = filePath
-			});
-
-			if (deleted.Count() != 1) {
-				throw new UnknownGameException(gameId, "No game assets were deleted");
-			}
-			transaction.Commit();
+			await _uow.Begin();
+			using var transaction = _gameAssetRepository.DeleteGameAsset(gameId, filePath);
+			await _uow.Commit();
 		}
 
 		public async Task<FileData?> GetGameAsset(Guid gameGuid, string path) {
-			return await _connection.QuerySingleOrDefaultAsync<FileData>(@"
-				SELECT f.mime_type, f.file_name, f.content_blob 
-					FROM game_assets ga
-					INNER JOIN games g ON ga.game_id = g.id
-					INNER JOIN public_files f ON ga.file_id = f.id
-					WHERE g.public_id = @GameGuid AND ga.path = @Path
-					LIMIT 1
-			", new {
-				GameGuid = gameGuid,
-				Path = path
-			});
+			await _uow.Begin();
+			var id = await _gameAssetRepository.GetGameAssetFileId(gameGuid, path);
+			if (id == null)
+				return null;
+			return await _publicFileService.GetFile(id.Value);
 		}
 
 		public async Task<IEnumerable<GameAssetBrief>> GetGameAssets(Guid gameGuid) {
-			return await _connection.QueryAsync<GameAssetBrief>(@"
-				SELECT ga.path
-					FROM game_assets ga
-					INNER JOIN games g ON ga.game_id = g.id
-					WHERE g.public_id = @GameGuid
-			", new {
-				GameGuid = gameGuid
-			});
+			return await _gameAssetRepository.GetGameAssets(gameGuid);
 		}
 
 		public Task<ISet<string>> GetAllowedGameAssetMimeTypes() {
