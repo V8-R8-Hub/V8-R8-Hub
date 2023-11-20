@@ -1,6 +1,9 @@
 let registeredComponents = [];
 let registeredPrimitives = {};
-let gameGuid = "";
+let gameGuid = null;
+let acceptedCookies = false;
+let previousLeftPosition = null;
+let previousRightPosition = null;
 
 function SetGameGuid(guid) {
     gameGuid = guid;
@@ -96,6 +99,7 @@ function RemoveNonVRElements() {
 
 function RemovePopup() {
     document.getElementById('cookiepopup').remove();
+    acceptedCookies = true;
 }
 
 createButtons();
@@ -103,3 +107,112 @@ createButtons();
 document.querySelector('a-scene').addEventListener('enter-vr', RemoveNonVRElements);
 
 switchScene("/components/menu.html ", null, "");
+
+AFRAME.registerComponent('camera-tracking', {
+    init: function () {
+        this.threshold = 0.01;
+        this.updateInterval = 1000;
+        this.previousCameraData = null;
+        this.updateCameraData();
+    },
+    updateCameraData: function () {
+        const camera = this.el.object3D;
+        const position = camera.position;
+        const rotation = camera.rotation;
+        const currentCameraData = {
+            position: { x: position.x, y: position.y, z: position.z },
+            rotation: { x: rotation.x, y: rotation.y, z: rotation.z },
+        };
+        if (!this.previousCameraData ||
+            thresholdCheck(this.previousCameraData.position, currentCameraData.position, this.threshold) ||
+            thresholdCheck(this.previousCameraData.rotation, currentCameraData.rotation, this.threshold)){
+            this.previousCameraData = currentCameraData;
+            this.el.emit('camera-updated', currentCameraData);
+        }
+        setTimeout(this.updateCameraData.bind(this), this.updateInterval);
+    },
+});
+
+document.querySelector('a-scene').addEventListener('camera-updated', function (event) {
+    if(gameGuid == null)
+        return;
+    const cameraData = event.detail;
+    const cameraPosition = cameraData.position;
+    const cameraRotation = cameraData.rotation;
+    sendMetricData(cameraPosition, "CameraPositionMetrics");
+    sendMetricData(cameraRotation, "CameraRotationMetrics");
+});
+
+function listenToRightHandEvents() {
+    const threshold = 0.01;
+    const rightController = document.getElementById('rightHand');
+    const rightControllerPosition = rightController.getAttribute('position');
+    const currentRightHandPosition = {
+        x: rightControllerPosition.x,
+        y: rightControllerPosition.y,
+        z: rightControllerPosition.z
+    };
+    if (!previousRightPosition ||
+        thresholdCheck(previousRightPosition, currentRightHandPosition, threshold)) {
+        previousRightPosition = currentRightHandPosition;
+        rightController.emit('rightControllerMoved', currentRightHandPosition);
+    }
+    setTimeout(listenToRightHandEvents, 1000);
+}
+
+function listenToLeftHandEvents() {
+    const threshold = 0.01;
+    const leftController = document.getElementById('leftHand');
+    const leftControllerPosition = leftController.getAttribute('position');
+    const currentLeftHandPosition = {
+        x: leftControllerPosition.x,
+        y: leftControllerPosition.y,
+        z: leftControllerPosition.z
+    };
+    if (!previousLeftPosition ||
+        thresholdCheck(previousLeftPosition, currentLeftHandPosition, threshold)) {
+        previousLeftPosition = currentLeftHandPosition;
+        leftController.emit('leftControllerMoved', currentLeftHandPosition);
+    }
+    setTimeout(listenToLeftHandEvents, 1000);
+}
+
+listenToRightHandEvents();
+listenToLeftHandEvents();
+
+document.getElementById('rightHand').addEventListener('rightControllerMoved', function (event) {
+    const rightControllerData = event.detail;
+    sendMetricData(rightControllerData, "rightControllerPosition");
+
+});
+
+document.getElementById('leftHand').addEventListener('leftControllerMoved', function (event) {
+    const leftControllerData = event.detail;
+    sendMetricData(leftControllerData, "leftControllerPosition");
+});
+
+function thresholdCheck(previousData, currentData, threshold) {
+    for (let i in currentData) {
+        if (Math.abs(currentData[i] - previousData[i]) > threshold) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function sendMetricData(metricJsonData, metricCategory)
+{
+    if(!acceptedCookies)
+        return;
+    const metricRequest = {
+        MetricJsonData: JSON.stringify(metricJsonData),
+        MetricCategory: metricCategory
+    }
+    fetch('/api/User/metrics/'+ gameGuid, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(metricRequest),
+    });
+}
