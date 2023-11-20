@@ -9,45 +9,55 @@ using System.Threading.Tasks;
 
 namespace DBUpgrader.Services
 {
-    internal class UpgradeService : IUpgradeService
-    {
-        private readonly IConnectionFactory _connectionFactory;
-        private readonly IUpgradePlannerService _upgradePlannerService;
+	internal class UpgradeService : IUpgradeService
+	{
+		private readonly IConnectionFactory _connectionFactory;
+		private readonly IUpgradePlannerService _upgradePlannerService;
 
-        public UpgradeService(
-            IConnectionFactory connectionFactory, 
-            IUpgradePlannerService upgradePlannerService
-        ) {
-            _connectionFactory = connectionFactory;
-            _upgradePlannerService = upgradePlannerService;
-        }
+		public UpgradeService(
+			IConnectionFactory connectionFactory, 
+			IUpgradePlannerService upgradePlannerService
+		) {
+			_connectionFactory = connectionFactory;
+			_upgradePlannerService = upgradePlannerService;
+		}
 
-        public async Task UpgradeTo(string targetUpgrader, UpgradeConfig config) {
-            var upgradePath = await _upgradePlannerService.PlanUpgradePath(targetUpgrader);
+		public async Task UpgradeTo(string targetUpgrader, UpgradeConfig config) {
+			var upgradePath = await _upgradePlannerService.PlanUpgradePath(targetUpgrader);
+			await RunUpgradePath(upgradePath, config);
+		}
 
-            if (!config.AllowDown) {
-                var downgradeAction = upgradePath.FirstOrDefault(x => x.UpgraderActionType == UpgraderActionType.Down);
-                if ( downgradeAction != null ) {
-                    throw new DisallowedUpgradeActionException(downgradeAction, "Upgrade path contains downgrades, but downgrades are not allowed");
-                }
-            }
+		public async Task UpgradeToLatest(UpgradeConfig config) {
+			var upgradePath = await _upgradePlannerService.PlanUpgradePathToLatest();
+			await RunUpgradePath(upgradePath, config);
+		}
 
-            var connection = await _connectionFactory.GetConnection();
-            using var transaction = await connection.BeginTransactionAsync();
-            try {
-                foreach (var upgraderAction in upgradePath) {
-                    if (upgraderAction.UpgraderActionType == UpgraderActionType.Up) {
-                        await upgraderAction.Upgrader.Up(connection);
-                    } else if (upgraderAction.UpgraderActionType == UpgraderActionType.Down) {
-                        await upgraderAction.Upgrader.Down(connection);
-                    }
-                }
-            } catch (Exception) {
-                await transaction.RollbackAsync();
-                throw;
-            }
+		private async Task RunUpgradePath(IEnumerable<UpgraderAction> upgradePath, UpgradeConfig config) {
+			if (!config.AllowDown) {
+				var downgradeAction = upgradePath.FirstOrDefault(x => x.UpgraderActionType == UpgraderActionType.Down);
+				if (downgradeAction != null) {
+					throw new DisallowedUpgradeActionException(downgradeAction, "Upgrade path contains downgrades, but downgrades are not allowed");
+				}
+			}
 
-            await transaction.CommitAsync();
-        }
-    }
+			var connection = await _connectionFactory.GetConnection();
+			using var transaction = await connection.BeginTransactionAsync();
+			try {
+				foreach (var upgraderAction in upgradePath) {
+					if (upgraderAction.UpgraderActionType == UpgraderActionType.Up) {
+						Console.WriteLine($"{upgraderAction.Upgrader.Name} UP");
+						await upgraderAction.Upgrader.Up(connection);
+					} else if (upgraderAction.UpgraderActionType == UpgraderActionType.Down) {
+						Console.WriteLine($"{upgraderAction.Upgrader.Name} DOWN");
+						await upgraderAction.Upgrader.Down(connection);
+					}
+				}
+			} catch (Exception) {
+				await transaction.RollbackAsync();
+				throw;
+			}
+
+			await transaction.CommitAsync();
+		}
+	}
 }

@@ -10,13 +10,17 @@ namespace V8_R8_Hub.Services {
 
 	public class DbConnector : IDbConnector {
 		NpgsqlConnection? _connection;
+		IConfigProvider _configProvider;
+		public DbConnector(IConfigProvider configProvider) {
+			_configProvider = configProvider;
+		}
 		public IDbConnection GetDbConnection() {
 			if (_connection == null) {
 				_connection = new NpgsqlConnection(DatabaseUtils.CreateConnectionString(new ConnectionStringModel {
-					Host = "localhost",
-					Username = "v8_r8_api_user",
-					Password = "bobby",
-					DatabaseName = "v8r8hub"
+					Host = _configProvider.DatabaseHost,
+					Username = _configProvider.DatabaseUser,
+					Password = _configProvider.DatabasePassword,
+					DatabaseName = _configProvider.DatabaseName
 				}));
 			}
 			return _connection;

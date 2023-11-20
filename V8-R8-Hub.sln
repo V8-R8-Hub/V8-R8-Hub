@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbUpgrader", "DbUpgrader\Db
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{D62EADB0-E219-45AC-85AF-FF1D9CBC5097}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{0B904E33-C169-4071-BA57-1E23A9D6EC89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D62EADB0-E219-45AC-85AF-FF1D9CBC5097}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D62EADB0-E219-45AC-85AF-FF1D9CBC5097}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D62EADB0-E219-45AC-85AF-FF1D9CBC5097}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B904E33-C169-4071-BA57-1E23A9D6EC89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B904E33-C169-4071-BA57-1E23A9D6EC89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B904E33-C169-4071-BA57-1E23A9D6EC89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B904E33-C169-4071-BA57-1E23A9D6EC89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -45,6 +45,12 @@ builder.Services.AddTransient<IGameRepository, GameRepository>();
 builder.Services.AddTransient<IGameSessionRepository, GameSessionRepository>();
 builder.Services.AddTransient<IMetricRepository, MetricRepository>();
 
+if (builder.Environment.IsDevelopment()) {
+	builder.Services.AddSingleton<IConfigProvider, DevConfigProvider>();
+} else {
+	builder.Services.AddSingleton<IConfigProvider, ProductionConfigProvider>();
+}
+
 builder.Services.AddTransient<IUnitOfWorkContext, UnitOfWorkContext>();
 
 var app = builder.Build();
