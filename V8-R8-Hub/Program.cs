@@ -1,5 +1,7 @@
 using Microsoft.OpenApi.Models;
+using V8_R8_Hub;
 using V8_R8_Hub.Middleware;
+using V8_R8_Hub.Repositories;
 using V8_R8_Hub.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,13 +32,26 @@ builder.Services.AddSession(options => {
 	options.Cookie.IsEssential = false;
 });
 
-builder.Services.AddTransient<IPublicFileService, PublicFileService>();
-builder.Services.AddTransient<ISafeFileService, SafeFileService>();
+builder.Services.AddTransient<IFileService, FileService>();
 builder.Services.AddTransient<IGameAssetService, GameAssetService>();
 builder.Services.AddTransient<IGameService, GameService>();
 builder.Services.AddTransient<IDbConnector, DbConnector>();
 builder.Services.AddTransient<IMetricService, MetricService>();
 builder.Services.AddTransient<IGameSessionService, GameSessionService>();
+
+builder.Services.AddTransient<IFileRepository, FileRepository>();
+builder.Services.AddTransient<IGameAssetRepository, GameAssetRepository>();
+builder.Services.AddTransient<IGameRepository, GameRepository>();
+builder.Services.AddTransient<IGameSessionRepository, GameSessionRepository>();
+builder.Services.AddTransient<IMetricRepository, MetricRepository>();
+
+if (builder.Environment.IsDevelopment()) {
+	builder.Services.AddSingleton<IConfigProvider, DevConfigProvider>();
+} else {
+	builder.Services.AddSingleton<IConfigProvider, ProductionConfigProvider>();
+}
+
+builder.Services.AddTransient<IUnitOfWorkContext, UnitOfWorkContext>();
 
 var app = builder.Build();
 

@@ -8,5 +8,6 @@ using System.Threading.Tasks;
 namespace DBUpgrader.Interfaces {
     internal interface IUpgradePlannerService {
         Task<IEnumerable<UpgraderAction>> PlanUpgradePath(string targetUpgrader);
+        Task<IEnumerable<UpgraderAction>> PlanUpgradePathToLatest();
     }
 }

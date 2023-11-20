@@ -27,7 +27,7 @@ namespace DBUpgrader.Services {
                 if (enumerator.Current == null) {
                     throw new UnknownUpgradeLevelException(entry.UpgraderName, $"Database has an unknown upgrader {entry.UpgraderName}");
                 }
-                
+
                 if (enumerator.Current.Name != entry.UpgraderName) {
                     throw new UnknownUpgradeLevelException(entry.UpgraderName, $"Database has an unknown upgrader {entry.UpgraderName}");
                 }
@@ -77,6 +77,10 @@ namespace DBUpgrader.Services {
                 }
             }
             return actions;
+        }
+
+        public async Task<IEnumerable<UpgraderAction>> PlanUpgradePathToLatest() {
+            return await PlanUpgradePath(_upgraderRepository.GetUpgraders().Last().Name);
         }
     }
 }
