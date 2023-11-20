@@ -60,7 +60,9 @@ namespace V8_R8_Hub.Controllers {
 				Description = gameBrief.Description,
 				ThumbnailUrl = Url.Action("GetFile", "PublicFile", new { fileGuid = gameBrief.ThumbnailGuid }),
 				GameBlobUrl = Url.Action("GetFile", "PublicFile", new { fileGuid = gameBrief.GameBlobGuid }),
-				Tags = gameBrief.CommaSeperatedTags.Split(",").ToList()
+				// virker måske ikke?
+				//Tags = gameBrief.CommaSeperatedTags.Split(",").ToList()
+				Tags = new List<string>()
 			}));
 		}
 
