@@ -1,5 +1,5 @@
-name: Upgrader tests
-run-name: Upgrader test
+name: E2E test
+run-name: E2E test
 on: push
 jobs:
   build:
