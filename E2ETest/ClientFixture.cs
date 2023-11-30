@@ -7,17 +7,18 @@ using System.Threading.Tasks;
 
 namespace E2ETest {
 	public class ClientFixture : IDisposable {
-		public HttpClient _client { get; set; }
-		private WebApplicationFactory<Program> _application;
+		public HttpClient Client { get; private set; }
+		private readonly WebApplicationFactory<Program> _application;
 
 		public ClientFixture() {
 			_application = new WebApplicationFactory<Program>();
-			_client = _application.CreateDefaultClient();
+			Client = _application.CreateDefaultClient();
 		}
 
 		public void Dispose() {
-			_client.Dispose();
+			Client.Dispose();
 			_application.Dispose();
+			GC.SuppressFinalize(this);
 		}
 	}
 }

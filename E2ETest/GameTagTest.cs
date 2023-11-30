@@ -10,17 +10,17 @@ using V8_R8_Hub.Models.Response;
 
 namespace E2ETest {
 	public class GameTagTest : IClassFixture<ClientFixture> {
-		private ClientFixture _fixture;
-		private HttpClient _client { get; set; }
+		private readonly ClientFixture _fixture;
+		private readonly HttpClient _client;
 
 		public GameTagTest(ClientFixture clientFixture) {
 			_fixture = clientFixture;
-			_client = _fixture._client;
+			_client = _fixture.Client;
 		}
 
 		[Fact]
 		public async Task GameTag_Create() {
-			var gameGuid = await ProjectHelper.CreateSampleGame(_client);
+			await ProjectHelper.CreateSampleGame(_client);
 			
 			await _client.PostJsonContent("/api/GameTag", "nothing");
 		}
@@ -45,6 +45,8 @@ namespace E2ETest {
 			var postResponse = await _client.PostJsonContent($"/api/Game/{gameGuid}/tags", "test");
 			var games = await _client.GetFromJsonAsync<List<GameBriefResponse>>($"/api/Game");
 
+			Assert.NotNull(games);
+
 			Assert.Multiple(
 				() => Assert.Equivalent(HttpStatusCode.OK, postResponse.StatusCode),
 				() => Assert.Contains(games, x => x.Guid == gameGuid && x.Tags.First() == "test")
@@ -60,7 +62,9 @@ namespace E2ETest {
 			await _client.PostJsonContent($"/api/Game/{gameGuid}/tags", "yep");
 			var games = await _client.GetFromJsonAsync<List<GameBriefResponse>>($"/api/Game");
 
-			var game = games.Where(x => x.Guid == gameGuid).Single();
+			Assert.NotNull(games);
+
+			var game = games.Single(x => x.Guid == gameGuid);
 
 			Assert.Multiple(
 				() => Assert.Collection(game.Tags,

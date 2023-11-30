@@ -77,9 +77,9 @@ app.UseSession();
 app.UsePersistentAuth();
 
 app.UseWhen(ctx => {
-	return ctx.Request.Path.StartsWithSegments("/api/user", StringComparison.OrdinalIgnoreCase);
+		return ctx.Request.Path.StartsWithSegments("/api/user", StringComparison.OrdinalIgnoreCase);
 	}, builder => {
-	builder.UseUserTracking();
+		builder.UseUserTracking();
 });
 
 app.MapRazorPages();

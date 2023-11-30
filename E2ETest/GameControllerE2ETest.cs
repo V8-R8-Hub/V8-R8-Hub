@@ -11,8 +11,8 @@ using V8_R8_Hub.Models.Response;
 
 namespace E2ETest {
 	public class GameControllerE2ETest {
-		private HttpClient _client { get; set; }
-		private WebApplicationFactory<Program> _application;
+		private readonly HttpClient _client;
+		private readonly WebApplicationFactory<Program> _application;
 
 		public GameControllerE2ETest() {
 			_application = new WebApplicationFactory<Program>();
