@@ -77,6 +77,18 @@ listPathCommand.SetHandler(async (upgraderTarget) => {
 	});
 }, upgraderTargetArgument);
 
+var createDevUserCommand = new Command(name: "create-dev-user", description: "Creates the user for dev environment");
+
+createDevUserCommand.SetHandler(async () => {
+	var db = await connectionFactory.GetConnection();
+	await db.ExecuteQuery("""
+		CREATE ROLE v8_r8_api_user WITH
+			LOGIN
+			PASSWORD 'bobby'
+			IN ROLE v8_r8_hub_api_group;
+		""");
+});
+
 var hostArgument = new Argument<string>(name: "host", description: "Database host");
 var databaseNameArgument = new Argument<string>(name: "name", description: "Database name");
 var databaseUserOption = new Option<string?>(name: "--user", description: "Database user username", getDefaultValue: () => null);
@@ -181,5 +193,6 @@ rootCommand.Add(upgradeCommand);
 rootCommand.Add(upgradeLatestCommand);
 rootCommand.Add(listPathCommand);
 rootCommand.Add(bootstrapCommand);
+rootCommand.Add(createDevUserCommand);
 
 await rootCommand.InvokeAsync(args);

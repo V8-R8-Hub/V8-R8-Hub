@@ -1,5 +1,5 @@
-name: Backend unit tests
-run-name: Backend unit test
+name: Unit tests
+run-name: Unit test
 on: push
 jobs:
   build:
@@ -15,4 +15,4 @@ jobs:
       - name: Build
         run: dotnet build
       - name: Test with the dotnet CLI
-        run: dotnet test
+        run: dotnet test UnitTest
