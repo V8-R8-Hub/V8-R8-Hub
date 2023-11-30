@@ -10,11 +10,9 @@ namespace V8_R8_Hub.Services {
 	}
 
 	public class MetricService : IMetricService {
-		private readonly IDbConnection _dbConnection;
 		private readonly IMetricRepository _metricRepository;
 
-		public MetricService(IDbConnector dbConnector, IMetricRepository metricRepository) {
-			_dbConnection = dbConnector.GetDbConnection();
+		public MetricService(IMetricRepository metricRepository) {
 			_metricRepository = metricRepository;
 		}
 

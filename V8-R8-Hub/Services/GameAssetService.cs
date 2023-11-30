@@ -43,7 +43,7 @@ namespace V8_R8_Hub.Services {
 
 		public async Task DeleteGameAsset(Guid gameId, string filePath) {
 			await _uow.Begin();
-			using var transaction = _gameAssetRepository.DeleteGameAsset(gameId, filePath);
+			await _gameAssetRepository.DeleteGameAsset(gameId, filePath);
 			await _uow.Commit();
 		}
 
@@ -71,7 +71,7 @@ namespace V8_R8_Hub.Services {
 				"audio/wav",
 				"application/x-javascript", 
 				"audio/x-wav", 
-            });
+			});
 		}
 	}
 }
