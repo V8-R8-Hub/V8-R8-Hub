@@ -65,7 +65,6 @@ async function switchScene(htmlFilename, guid, jsFilename) {
 
 function SetHistory(game) {
     if (game == null) {
-        window.history.pushState("", "GameHub", "/components/");
         return;
     }
     window.history.pushState("", game.name, "/api/Game/" + game.guid + "/assets/play");
@@ -140,7 +139,7 @@ AFRAME.registerComponent('camera-tracking', {
         };
         if (!this.previousCameraData ||
             thresholdCheck(this.previousCameraData.position, currentCameraData.position, this.threshold) ||
-            thresholdCheck(this.previousCameraData.rotation, currentCameraData.rotation, this.threshold)){
+            thresholdCheck(this.previousCameraData.rotation, currentCameraData.rotation, this.threshold)) {
             this.previousCameraData = currentCameraData;
             this.el.emit('camera-updated', currentCameraData);
         }
@@ -149,7 +148,7 @@ AFRAME.registerComponent('camera-tracking', {
 });
 
 document.querySelector('a-scene').addEventListener('camera-updated', function (event) {
-    if(gameGuid == null)
+    if (gameGuid == null)
         return;
     const cameraData = event.detail;
     const cameraPosition = cameraData.position;
@@ -215,15 +214,14 @@ function thresholdCheck(previousData, currentData, threshold) {
     return false;
 }
 
-function sendMetricData(metricJsonData, metricCategory)
-{
-    if(!acceptedCookies)
+function sendMetricData(metricJsonData, metricCategory) {
+    if (!acceptedCookies)
         return;
     const metricRequest = {
         MetricJsonData: JSON.stringify(metricJsonData),
         MetricCategory: metricCategory
     }
-    fetch('/api/User/metrics/'+ gameGuid, {
+    fetch('/api/User/metrics/' + gameGuid, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
