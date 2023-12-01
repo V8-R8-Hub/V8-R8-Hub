@@ -30,7 +30,7 @@ Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 builder.Services.AddSession(options => {
 	options.IdleTimeout = TimeSpan.FromHours(1);
 	options.Cookie.HttpOnly = true;
-	options.Cookie.IsEssential = false;
+	options.Cookie.IsEssential = true;
 });
 
 builder.Services.AddTransient<IFileService, FileService>();
