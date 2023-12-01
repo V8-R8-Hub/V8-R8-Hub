@@ -20,17 +20,25 @@ jobs:
           dotnet-version: 7.0.x
       - name: Install dependencies
         run: dotnet restore
-      - name: Build and publish
+      - name: Build and publish backend
         run: |
           cd V8-R8-Hub
           dotnet build --configuration Release --no-restore
           dotnet publish -c Release -o ../v8-r8-hub-build -r linux-x64 --self-contained true /p:UseAppHost=true
+      - name: Build and publish upgrader
+        run: |
+          cd DbUpgrader
+          dotnet build --configuration Release --no-restore
+          dotnet publish -c Release -o ../upgrader-build -r linux-x64 --self-contained true /p:UseAppHost=true
       - name: Bundle build
         run: |
-          tar -czvf build.tar.gz v8-r8-hub-build
+          tar -czvf backend-build.tar.gz v8-r8-hub-build
+          tar -czvf upgrader-build.tar.gz upgrader-build
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            build.tar.gz
+            backend-build.tar.gz
+            upgrader-build.tar.gz
+      
