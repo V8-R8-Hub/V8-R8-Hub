@@ -97,10 +97,25 @@ function RemoveNonVRElements() {
     RemovePopup();
 }
 
+const cookiePopup = document.getElementById('cookiepopup');
 function RemovePopup() {
-    document.getElementById('cookiepopup').remove();
+    cookiePopup.remove();
+}
+
+function DismissCookiePopup(accepted) {
+    RemovePopup();
+    if (accepted) {
+        document.cookie = "V8R8HubCookieAccept=; Max-Age=34560000";
+    } else {
+        document.cookie = "V8R8HubCookieAccept=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    }
     acceptedCookies = true;
 }
+
+if (document.cookie.split(";").find(x => x.startsWith("V8R8HubCookieAccept") != null)) {
+    RemovePopup();
+}
+
 
 createButtons();
 

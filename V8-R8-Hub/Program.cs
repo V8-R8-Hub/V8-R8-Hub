@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
 using V8_R8_Hub;
 using V8_R8_Hub.Middleware;
@@ -57,7 +58,13 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment()) {
 	app.UseExceptionHandler("/Error");
+
+	app.UseForwardedHeaders(new ForwardedHeadersOptions {
+		ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+	});
+
 	app.UseHsts();
+
 }
 
 app.UseHttpsRedirection();
@@ -77,9 +84,9 @@ app.UseSession();
 app.UsePersistentAuth();
 
 app.UseWhen(ctx => {
-	return ctx.Request.Path.StartsWithSegments("/api/user", StringComparison.OrdinalIgnoreCase);
+		return ctx.Request.Path.StartsWithSegments("/api/user", StringComparison.OrdinalIgnoreCase);
 	}, builder => {
-	builder.UseUserTracking();
+		builder.UseUserTracking();
 });
 
 app.MapRazorPages();

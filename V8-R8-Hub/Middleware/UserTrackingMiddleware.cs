@@ -11,7 +11,10 @@ namespace V8_R8_Hub.Middleware {
 		}
 
 		public async Task InvokeAsync(HttpContext context, IDbConnector dbConnector) {
-			 if (!context.Session.Keys.Contains("UserId")) {
+			 if (
+				!context.Session.Keys.Contains("UserId") || 
+				context.Request.Cookies["V8R8HubCookieAccept"] != null
+			) {
 				var db = dbConnector.GetDbConnection();
 
 				var userId = await db.QuerySingleAsync<int>("INSERT INTO users DEFAULT VALUES RETURNING id");

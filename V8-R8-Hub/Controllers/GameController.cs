@@ -110,7 +110,7 @@ namespace V8_R8_Hub.Controllers {
 		/// <response code="200">Success</response>
 		/// <response code="404">Either the game guid or the asset path does not correspond with an asset</response>
 		[HttpDelete("{guid:guid}/assets/{path}", Name = "DeleteGameAsset")]
-		[ProducesResponseType(typeof(GameAssetBrief), 200)]
+		[ProducesResponseType(200)]
 		[ProducesResponseType(404)]
 		public async Task<IActionResult> DeleteGameAsset(Guid guid, string path) {
 			try {
