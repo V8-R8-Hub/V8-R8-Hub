@@ -78,21 +78,16 @@ RegisterAFRAMEComponent('description', {
         textElement.setAttribute("color", "grey");
         textElement.setAttribute('height', 3);
         textElement.setAttribute('width', 4);
+
         textElement.setAttribute('position', { x: 0, y: 2, z: 0.05 })
-        let text = this.CreateText(this.game.description, "black");
+        let game = this.game.description;
+        console.log(game);
+        let text = CreateText(textElement, this.game.description, "black", "left", "top");
         textElement.appendChild(text);
         return textElement;
     },
 
-    CreateText: function (string, color) {
-        let text = document.createElement('a-text')
-        text.setAttribute("position", { x: 0.05, y: 0.4, z: 0.01 });
-        text.setAttribute("scale", { x: 3, y: 3, z: 3 });
-        text.setAttribute("value", string);
-        text.setAttribute('color', color);
 
-        return text;
-    },
 
     CreatePlayButton: function () {
         let PlayButton = document.createElement('a-rounded');
@@ -101,29 +96,31 @@ RegisterAFRAMEComponent('description', {
         PlayButton.setAttribute('width', 5);
         PlayButton.setAttribute("color", "grey");
 
-        EventHandler.AddEventListener(PlayButton, 'mousedown', () => {
+        PlayButton.addEventListener('mousedown', () => {
             EventHandler.ActivateEventlisteners();
             switchScene(this.game.htmlUrl, this.game.guid, "");
         });
 
         PlayButton.setAttribute("position", { x: 0.05, y: 0.4, z: 0.01 });
-        let buttonText = this.CreateText(`play ${this.game.name}`, "black");
+        let buttonText = CreateText(PlayButton, `play ${this.game.name}`, "black", "left", "center");
         PlayButton.appendChild(buttonText);
 
         return PlayButton;
     },
 
     CreateExitButton: function () {
-        let exitButton = document.createElement('a-entity');
 
-        exitButton.setAttribute('height', 2);
-        exitButton.setAttribute('width', 2);
+        let exitButton = document.createElement('a-rounded');
 
-        exitButton.setAttribute('position', { x: 4.5, y: 4.5, z: 0.05 })
-        let exitText = this.CreateText("X", "black");
+        exitButton.setAttribute('height', 0.5);
+        exitButton.setAttribute('width', 0.5);
+        exitButton.setAttribute('color', 'black');
+        exitButton.setAttribute('position', { x: 4.5, y: 4.5, z: 0.01 })
+        exitButton.setAttribute('radius', 0.08);
+        let exitText = CreateText(exitButton, "X", "white", "center", "center");
 
 
-        EventHandler.AddEventListener(exitButton, "mousedown", () => {
+        exitButton.addEventListener("mousedown", () => {
             this.descriptionElement.remove();
             EventHandler.ActivateEventlisteners();
         });
@@ -151,7 +148,6 @@ RegisterAFRAMEPrimitive('a-description', {
         guid: "description.guid",
     },
 })
-
 
 RegisterAFRAMEComponent('gamegrid', {
     schema: {
