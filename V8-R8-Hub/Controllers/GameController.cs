@@ -69,11 +69,12 @@ namespace V8_R8_Hub.Controllers {
 		[ProducesResponseType(typeof(FileContentResult), 200)]
 		[ProducesResponseType(404)]
 		public async Task<IActionResult> GetGameAsset(Guid guid, string path) {
-			var asset = await _gameAssetService.GetGameAsset(guid, path);
+			var asset = await _gameAssetService.GetGameAssetId(guid, path);
 			if (asset == null) {
 				return NotFound();
 			}
-			return File(asset.ContentBlob, asset.MimeType, asset.FileName);
+			return RedirectToAction("GetFile", "PublicFile", new { fileGuid = asset.Guid });
+			//return File(asset.ContentBlob, asset.MimeType, asset.FileName);
 		}
 
 		/// <summary>
