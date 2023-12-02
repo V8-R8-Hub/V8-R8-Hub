@@ -65,6 +65,8 @@ async function switchScene(htmlFilename, guid, jsFilename) {
 
 function SetHistory(game) {
     if (game == null) {
+        window.history.pushState("", "gamehub", "/");
+
         return;
     }
     window.history.pushState("", game.name, "/api/Game/" + game.guid + "/assets/play");
@@ -120,7 +122,12 @@ createButtons();
 
 document.querySelector('a-scene').addEventListener('enter-vr', RemoveNonVRElements);
 
-switchScene("/components/menu.html ", null, "");
+
+function GoToHub() {
+    switchScene("/components/menu.html", null, "");
+
+}
+GoToHub();
 
 AFRAME.registerComponent('camera-tracking', {
     init: function () {

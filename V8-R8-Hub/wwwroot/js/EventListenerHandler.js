@@ -12,6 +12,7 @@ class ToggleAbleEventHandler {
         this.#Clickable = true;
     }
     AddEventListener(element, eventName, onClick) {
+
         element.addEventListener(eventName, () => {
             if (this.#Clickable) {
                 onClick();

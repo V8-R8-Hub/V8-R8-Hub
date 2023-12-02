@@ -9,6 +9,7 @@ RegisterAFRAMEComponent('game', {
         this.game = GetGamesLoader().getGame(this.data.guid);
 
         this.gameElement = document.createElement("a-image");
+        this.gameElement.setAttribute("id", this.game.guid);
         this.gameElement.setAttribute('class', 'Game');
         this.gameElement.setAttribute("width", "3");
         this.gameElement.setAttribute("height", "3");
@@ -19,17 +20,19 @@ RegisterAFRAMEComponent('game', {
     },
 
     ShowDescriptionOnClick: function () {
-        EventHandler.AddEventListener(this.gameElement, "mousedown", () => {
-            let descriptionElement = this.CreateDescriptionElement();
+        var self = this;
 
-            this.el.appendChild(descriptionElement);
+        EventHandler.AddEventListener(self.gameElement, "mousedown", function () {
+            let descriptionElement = self.CreateDescriptionElement(self.game.guid);
+
+            self.el.appendChild(descriptionElement);
             EventHandler.DeactivateEventlisteners();
         });
     },
 
-    CreateDescriptionElement: function () {
+    CreateDescriptionElement: function (guid) {
         let descriptionElement = document.createElement("a-Description");
-        descriptionElement.setAttribute("guid", this.game.guid);
+        descriptionElement.setAttribute("guid", guid);
 
         return descriptionElement;
     }
@@ -52,7 +55,8 @@ RegisterAFRAMEComponent('description', {
 
     init: function () {
         this.game = GetGamesLoader().getGame(this.data.guid);
-
+        console.log(this.data.guid);
+        "/a2d966b3-8600-4ecd-9bb9-cedeed54920a";
         this.RenderDescriptionElemment();
     },
 
@@ -164,8 +168,7 @@ RegisterAFRAMEComponent('gamegrid', {
             this.gamesPerRow = 3;
             this.games_on_page = [];
             this.page_number = 0;
-            this.number_of_pages = Math.ceil(this.data.games.length / this.gamesPerPage);
-
+            this.number_of_pages = Math.ceil(this.games.getGames().length / this.gamesPerPage);
             this.menu = document.createElement('a-menu');
             this.CreateAssets();
             this.CreateGamePagesArray();
@@ -204,6 +207,8 @@ RegisterAFRAMEComponent('gamegrid', {
         let leftButton = this.CreateButton("left", () => {
             if (this.page_number != 0) {
                 this.page_number -= 1;
+                ClearMenu();
+
                 this.CreateStuff();
             }
         });
@@ -213,8 +218,12 @@ RegisterAFRAMEComponent('gamegrid', {
 
         let rightButton = this.CreateButton("right", () => {
             if (this.page_number + 1 < this.number_of_pages) {
+
                 this.page_number += 1;
+                ClearMenu();
+
                 this.CreateStuff();
+
             }
         });
 
