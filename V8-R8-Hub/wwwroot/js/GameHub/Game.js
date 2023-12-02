@@ -20,12 +20,11 @@ RegisterAFRAMEComponent('game', {
     },
 
     ShowDescriptionOnClick: function () {
-        var self = this;
 
-        EventHandler.AddEventListener(self.gameElement, "mousedown", function () {
-            let descriptionElement = self.CreateDescriptionElement(self.game.guid);
+        EventHandler.AddEventListener(this.gameElement, "mousedown", () => {
+            let descriptionElement = this.CreateDescriptionElement(this.game.guid);
 
-            self.el.appendChild(descriptionElement);
+            this.el.appendChild(descriptionElement);
             EventHandler.DeactivateEventlisteners();
         });
     },
