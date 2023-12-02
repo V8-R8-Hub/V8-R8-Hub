@@ -279,7 +279,6 @@ RegisterAFRAMEComponent('gamegrid', {
             let games_on_row = games_on_page.slice(i, i + this.gamesPerRow);
 
             let y_coordinates = 8 - ((i * 4) / this.gamesPerRow);
-            console.log(y_coordinates);
             let row_element = document.createElement("a-entity");
 
             row_element.setAttribute("position", { x: 0, y: y_coordinates, z: 0 })
