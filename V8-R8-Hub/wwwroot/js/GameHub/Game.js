@@ -11,8 +11,8 @@ RegisterAFRAMEComponent('game', {
         this.gameElement = document.createElement("a-image");
         this.gameElement.setAttribute("id", this.game.guid);
         this.gameElement.setAttribute('class', 'Game');
-        this.gameElement.setAttribute("width", "3");
-        this.gameElement.setAttribute("height", "3");
+        this.gameElement.setAttribute("width", 2);
+        this.gameElement.setAttribute("height", 2);
 
         this.gameElement.setAttribute("src", `#${this.game.guid}-thumb`);
         this.ShowDescriptionOnClick();
@@ -64,11 +64,13 @@ RegisterAFRAMEComponent('description', {
         this.descriptionElement = descriptionElement;
         this.descriptionElement.setAttribute('height', 5);
         descriptionElement.setAttribute('width', 5);
-        descriptionElement.setAttribute('position', { x: -2.5, y: 2.5, z: 1 })
+        descriptionElement.setAttribute('position', { x: 1.5, y: 1.15, z: 1 })
 
         let playButton = this.CreatePlayButton();
         let textElement = this.CreateDescriptionTextElement();
         let exitButton = this.CreateExitButton();
+        let ThumbNailUrl = this.CreateDescriptionThumbnail();
+        this.descriptionElement.appendChild(ThumbNailUrl);
         this.descriptionElement.appendChild(playButton)
         this.descriptionElement.appendChild(exitButton)
 
@@ -80,7 +82,7 @@ RegisterAFRAMEComponent('description', {
         let textElement = document.createElement("a-rounded");
         textElement.setAttribute("color", "grey");
         textElement.setAttribute('height', 3);
-        textElement.setAttribute('width', 4);
+        textElement.setAttribute('width', 5);
 
         textElement.setAttribute('position', { x: 0, y: 2, z: 0.05 })
         let game = this.game.description;
@@ -94,7 +96,6 @@ RegisterAFRAMEComponent('description', {
 
     CreatePlayButton: function () {
         let PlayButton = document.createElement('a-rounded');
-        PlayButton.setAttribute('position', { x: 0, y: 0, z: 0.05 })
         PlayButton.setAttribute('height', 1);
         PlayButton.setAttribute('width', 5);
         PlayButton.setAttribute("color", "grey");
@@ -104,7 +105,7 @@ RegisterAFRAMEComponent('description', {
             switchScene(this.game.htmlUrl, this.game.guid, "");
         });
 
-        PlayButton.setAttribute("position", { x: 0.05, y: 0.4, z: 0.01 });
+        PlayButton.setAttribute("position", { x: 0, y: 0, z: 0.01 });
         let buttonText = CreateText(PlayButton, `play ${this.game.name}`, "black", "left", "center");
         PlayButton.appendChild(buttonText);
 
@@ -118,7 +119,7 @@ RegisterAFRAMEComponent('description', {
         exitButton.setAttribute('height', 0.5);
         exitButton.setAttribute('width', 0.5);
         exitButton.setAttribute('color', 'black');
-        exitButton.setAttribute('position', { x: 4.5, y: 4.5, z: 0.01 })
+        exitButton.setAttribute('position', { x: 4.5, y: 4.5, z: 0.06 })
         exitButton.setAttribute('radius', 0.08);
         let exitText = CreateText(exitButton, "X", "white", "center", "center");
 
@@ -134,9 +135,9 @@ RegisterAFRAMEComponent('description', {
 
     CreateDescriptionThumbnail: function () {
         let gameElement = document.createElement("a-image");
-
-        gameElement.setAttribute("width", "3");
-        gameElement.setAttribute("height", "3");
+        gameElement.setAttribute("position", { x: 4, y: 3, z: 0.06 });
+        gameElement.setAttribute("width", "2");
+        gameElement.setAttribute("height", "2");
         gameElement.setAttribute("src", `#${this.game.guid}-thumb`);
 
         return gameElement;
@@ -193,7 +194,7 @@ RegisterAFRAMEComponent('gamegrid', {
     CreateStuff: function () {
         let poscontainer = document.createElement("a-entity");
         poscontainer.setAttribute("id", this.data.id);
-        poscontainer.setAttribute("position", { x: -4, y: 2, z: 0 });
+        poscontainer.setAttribute("position", { x: -4, y: 0, z: 0 });
         let container = this.CreateFullcontainer();
 
         poscontainer.appendChild(container);
@@ -250,7 +251,7 @@ RegisterAFRAMEComponent('gamegrid', {
 
     CreateGameContainer: function () {
         let gameContainer = document.createElement("a-entity");
-
+        gameContainer.setAttribute("position", { x: 0, y: -2, z: 0 });
         let backButton = this.CreateButton("back", () => {
             this.GoToMenu();
         });
@@ -277,7 +278,7 @@ RegisterAFRAMEComponent('gamegrid', {
         for (let i = 0; i < games_on_page.length; i += this.gamesPerRow) {
             let games_on_row = games_on_page.slice(i, i + this.gamesPerRow);
 
-            let y_coordinates = 8 - ((i * 4) / this.gamesPerRow);
+            let y_coordinates = 8 - ((i * 2.15) / this.gamesPerRow);
             let row_element = document.createElement("a-entity");
 
             row_element.setAttribute("position", { x: 0, y: y_coordinates, z: 0 })
@@ -297,6 +298,8 @@ RegisterAFRAMEComponent('gamegrid', {
     RenderGameElement: function (row, game, x_coordinates) {
         let gameElement = document.createElement("a-game");
         gameElement.setAttribute("position", { x: x_coordinates, y: 0, z: 0 })
+
+
 
         gameElement.setAttribute("guid", game.guid);
 
