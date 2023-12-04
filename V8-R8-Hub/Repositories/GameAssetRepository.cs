@@ -11,7 +11,7 @@ namespace V8_R8_Hub.Repositories {
 		Task<GameAssetBrief> AddGameAsset(int gameId, int fileId, string path);
 		Task DeleteGameAsset(Guid gameId, string filePath);
 		Task<IEnumerable<GameAssetBrief>> GetGameAssets(Guid gameGuid);
-		Task<int?> GetGameAssetFileId(Guid gameGuid, string path);
+		Task<ObjectIdentifier?> GetGameAssetFileId(Guid gameGuid, string path);
 	}
 
 	public class GameAssetRepository : IGameAssetRepository {
@@ -32,11 +32,12 @@ namespace V8_R8_Hub.Repositories {
 			});
 		}
 
-		public async Task<int?> GetGameAssetFileId(Guid gameGuid, string path) {
-			return await _db.QuerySingleOrDefaultAsync<int?>("""
-				SELECT ga.file_id
+		public async Task<ObjectIdentifier?> GetGameAssetFileId(Guid gameGuid, string path) {
+			return await _db.QuerySingleOrDefaultAsync<ObjectIdentifier?>("""
+				SELECT pf.id as "id", pf.public_id as "guid"
 					FROM game_assets ga
 					INNER JOIN games g ON ga.game_id = g.id
+					INNER JOIN public_files pf ON ga.file_id = pf.id
 					WHERE g.public_id = @GameGuid AND ga.path = @Path
 					LIMIT 1
 				""", new {

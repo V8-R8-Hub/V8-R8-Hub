@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using V8_R8_Hub.Repositories;
 using V8_R8_Hub.Services;
 
@@ -20,12 +21,18 @@ namespace V8_R8_Hub.Controllers {
 		[HttpGet("{fileGuid:guid}", Name = "GetFile")]
 		[ProducesResponseType(typeof(FileContentResult), 200)]
 		[ProducesResponseType(404)]
+		[ResponseCache(Duration = 31536000)]
 		public async Task<IActionResult> GetFile(Guid fileGuid) {
 			var file = await _fileRepository.GetFile(fileGuid);
 			if (file == null) {
 				return NotFound();
 			}
-			return File(file.ContentBlob, file.MimeType, file.FileName);
+
+			return File(
+				file.ContentBlob,
+				file.MimeType,
+				file.FileName
+			);
 		}
 	}
 }

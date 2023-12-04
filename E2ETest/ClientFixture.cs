@@ -12,7 +12,7 @@ namespace E2ETest {
 
 		public ClientFixture() {
 			_application = new WebApplicationFactory<Program>();
-			Client = _application.CreateDefaultClient();
+			Client = _application.CreateClient();
 		}
 
 		public void Dispose() {

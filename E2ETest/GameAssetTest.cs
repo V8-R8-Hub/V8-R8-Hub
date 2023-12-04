@@ -42,7 +42,7 @@ namespace E2ETest {
 			};
 
 			await _client.PostAsync($"/api/Game/{gameGuid}/assets", form);
-
+			
 			var getRequest = await _client.GetAsync($"/api/Game/{gameGuid}/assets/testAsset.txt");
 
 			Assert.Equivalent(HttpStatusCode.OK, getRequest.StatusCode);

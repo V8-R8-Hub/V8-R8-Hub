@@ -8,6 +8,7 @@ namespace V8_R8_Hub.Services {
 		Task DeleteGameAsset(Guid gameId, string filePath);
 		Task<ISet<string>> GetAllowedGameAssetMimeTypes();
 		Task<FileData?> GetGameAsset(Guid gameGuid, string path);
+		Task<ObjectIdentifier?> GetGameAssetId(Guid gameGuid, string path);
 		Task<IEnumerable<GameAssetBrief>> GetGameAssets(Guid gameGuid);
 	}
 
@@ -52,7 +53,7 @@ namespace V8_R8_Hub.Services {
 			var id = await _gameAssetRepository.GetGameAssetFileId(gameGuid, path);
 			if (id == null)
 				return null;
-			return await _publicFileService.GetFile(id.Value);
+			return await _publicFileService.GetFile(id.Id);
 		}
 
 		public async Task<IEnumerable<GameAssetBrief>> GetGameAssets(Guid gameGuid) {
@@ -72,6 +73,11 @@ namespace V8_R8_Hub.Services {
 				"application/x-javascript", 
 				"audio/x-wav", 
 			});
+		}
+
+		public async Task<ObjectIdentifier?> GetGameAssetId(Guid gameGuid, string path) {
+			var id = await _gameAssetRepository.GetGameAssetFileId(gameGuid, path);
+			return id;
 		}
 	}
 }
