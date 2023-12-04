@@ -298,9 +298,6 @@ RegisterAFRAMEComponent('gamegrid', {
     RenderGameElement: function (row, game, x_coordinates) {
         let gameElement = document.createElement("a-game");
         gameElement.setAttribute("position", { x: x_coordinates, y: 0, z: 0 })
-
-
-
         gameElement.setAttribute("guid", game.guid);
 
         row.appendChild(gameElement);
