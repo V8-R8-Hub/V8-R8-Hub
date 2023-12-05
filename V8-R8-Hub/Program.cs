@@ -45,6 +45,7 @@ builder.Services.AddTransient<IGameAssetRepository, GameAssetRepository>();
 builder.Services.AddTransient<IGameRepository, GameRepository>();
 builder.Services.AddTransient<IGameSessionRepository, GameSessionRepository>();
 builder.Services.AddTransient<IMetricRepository, MetricRepository>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 if (builder.Environment.IsDevelopment()) {
 	builder.Services.AddSingleton<IConfigProvider, DevConfigProvider>();
