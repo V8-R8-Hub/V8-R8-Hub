@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Http;
 using System.Globalization;
+using V8_R8_Hub.Repositories;
 using V8_R8_Hub.Services;
 
 namespace V8_R8_Hub.Middleware {
@@ -11,26 +12,17 @@ namespace V8_R8_Hub.Middleware {
 			_next = next;
 		}
 
-		public async Task InvokeAsync(HttpContext context, IDbConnector dbConnector) {
+		public async Task InvokeAsync(HttpContext context, UserRepository userRepository) {
 			if (
 				!context.Session.Keys.Contains("UserId") &&
-				context.Request.Cookies.TryGetValue("AuthCookie", out string? authCookieValue) &&
-				authCookieValue == null
+				context.Request.Cookies.TryGetValue("AuthCookie", out string? authCookieValue)
 			) {
-				var db = dbConnector.GetDbConnection();
+				var user = await userRepository.GetUserFromAuthKey(authCookieValue);
 
-				int? userId = await db.QuerySingleOrDefaultAsync<int?>("""
-					SELECT user_id
-						FROM auth_keys
-						WHERE key = @Key
-					""", new {
-					Key = authCookieValue
-				});
-
-				if (userId == null) {
+				if (user == null) {
 					context.Response.Cookies.Delete("AuthCookie");
 				} else {
-					context.Session.SetInt32("UserId", userId.Value);
+					context.Session.SetInt32("UserId", user.Id);
 				}
 			}
 			await _next(context);

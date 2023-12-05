@@ -1,5 +1,7 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
+using V8_R8_Hub.Repositories;
 using V8_R8_Hub.Services;
 
 namespace V8_R8_Hub.Middleware {
@@ -10,25 +12,19 @@ namespace V8_R8_Hub.Middleware {
 			_next = next;
 		}
 
-		public async Task InvokeAsync(HttpContext context, IDbConnector dbConnector) {
+		public async Task InvokeAsync(HttpContext context, IUserRepository userRepository) {
 			 if (
 				!context.Session.Keys.Contains("UserId") || 
 				context.Request.Cookies["V8R8HubCookieAccept"] != null
 			) {
-				var db = dbConnector.GetDbConnection();
+				var user = await userRepository.CreateUser();
+				context.Session.SetInt32("UserId", user.Id);
 
-				var userId = await db.QuerySingleAsync<int>("INSERT INTO users DEFAULT VALUES RETURNING id");
-				context.Session.SetInt32("UserId", userId);
-
-				var key = Convert.ToHexString(RandomNumberGenerator.GetBytes(8));
-
-				await db.ExecuteAsync("INSERT INTO auth_keys (user_id, key) VALUES (@UserId, @Key)", new {
-					UserId = userId,
-					Key = key
-				});
+				var key = await userRepository.CreateAuthKey(user.Id);
 
 				context.Response.Cookies.Append("AuthCookie", key, new CookieOptions {
-					HttpOnly = true
+					HttpOnly = true,
+					MaxAge = TimeSpan.FromDays(400)
 				});
 			}
 			await _next(context);
