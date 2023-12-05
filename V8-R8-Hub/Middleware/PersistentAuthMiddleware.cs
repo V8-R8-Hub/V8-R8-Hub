@@ -12,7 +12,7 @@ namespace V8_R8_Hub.Middleware {
 			_next = next;
 		}
 
-		public async Task InvokeAsync(HttpContext context, UserRepository userRepository) {
+		public async Task InvokeAsync(HttpContext context, IUserRepository userRepository) {
 			if (
 				!context.Session.Keys.Contains("UserId") &&
 				context.Request.Cookies.TryGetValue("AuthCookie", out string? authCookieValue)
