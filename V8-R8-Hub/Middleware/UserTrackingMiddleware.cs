@@ -14,7 +14,7 @@ namespace V8_R8_Hub.Middleware {
 
 		public async Task InvokeAsync(HttpContext context, IUserRepository userRepository) {
 			 if (
-				!context.Session.Keys.Contains("UserId") || 
+				!context.Session.Keys.Contains("UserId") &&
 				context.Request.Cookies["V8R8HubCookieAccept"] != null
 			) {
 				var user = await userRepository.CreateUser();
