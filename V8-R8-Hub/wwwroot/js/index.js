@@ -1,7 +1,6 @@
 let registeredComponents = [];
 let registeredPrimitives = {};
 let gameGuid = null;
-let acceptedCookies = false;
 let previousLeftPosition = null;
 let previousRightPosition = null;
 
@@ -110,7 +109,6 @@ function DismissCookiePopup(accepted) {
     } else {
         document.cookie = "V8R8HubCookieAccept=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
     }
-    acceptedCookies = true;
 }
 
 if (document.cookie.split(";").find(x => x.startsWith("V8R8HubCookieAccept") != null)) {
@@ -222,8 +220,7 @@ function thresholdCheck(previousData, currentData, threshold) {
 }
 
 function sendMetricData(metricJsonData, metricCategory) {
-    if (!acceptedCookies)
-        return;
+
     const metricRequest = {
         MetricJsonData: JSON.stringify(metricJsonData),
         MetricCategory: metricCategory
